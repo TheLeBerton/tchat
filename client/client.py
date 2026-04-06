@@ -1,3 +1,4 @@
+import os
 import sys
 import socket
 import threading
@@ -12,7 +13,7 @@ def run() -> None:
     logger.banner()
     client = socket.socket( socket.AF_INET, socket.SOCK_STREAM )
     client.connect( ( config.client.ip, config.client.port ) )
-    user_name = input( "Enter user name: " )
+    user_name = _get_username()
     _send_user_name( client, user_name )
     _start_thread( client )
     while True:
@@ -56,4 +57,13 @@ def _recieve( connection: socket.socket ) -> None:
         except:
             break
     print( f"[ Connection closed ]" )
+
+def _get_username() -> str:
+    if os.path.exists( ".username" ):
+        with open( ".username", "r" ) as f:
+            return f.read().strip()
+    name = input( "Enter user name: " )
+    with open( ".username", "w") as f:
+        f.write( name )
+    return name
 
