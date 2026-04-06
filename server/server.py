@@ -2,6 +2,7 @@ import socket
 import threading
 
 from config import config
+import logger
 
 
 users: dict[ tuple, str ] = {}
@@ -23,17 +24,16 @@ def _check_connections( server: socket.socket ) -> None:
         try:
             connection, address = server.accept()
             connections[ address ] = connection
-            print( f"Connected to { address }" )
+            logger.connected( address )
             _start_thread( connection, address )
         except:
             break
-    print( f"[ Connection closed ]" )
 
 def _connect_server( server: socket.socket ) -> None:
     server.setsockopt( socket.SOL_SOCKET, socket.SO_REUSEADDR, 1 )
     server.bind( ( config.server.ip, config.server.port ) )
     server.listen( config.server.waiting_list_size )
-    print( f"Waiting for connection on port { config.server.port }" )
+    logger.info( f"Waiting for connection on port { config.server.port }" )
 
 def _start_thread( connection: socket.socket, address: tuple ) -> None:
     thread = threading.Thread( target=_recieve, args=( connection, address ), daemon = True )
@@ -51,11 +51,11 @@ def _recieve( connection: socket.socket, address: tuple ) -> None:
             if "USER_NAME" in data.decode():
                 continue
             _broadcast( data.decode(), address )
-            print( f"\n[ { users[ address ] } ] { data.decode() }" )
+            logger.log( f"[ { users[ address ] } ]: { data.decode() }" )
         except:
             break
     connection.close()
-    print( f"[ Connection closed ]" )
+    logger.disconnected( address )
 
 def _try_add_user( data: bytes, address: tuple ) -> None:
     if address in users:
@@ -70,6 +70,6 @@ def _broadcast( msg: str, sender_address: tuple ) -> None:
     for address, connection in connections.items():
         if address == sender_address:
             continue
-        message = f"[ { users[ address ] } ] { msg }"
+        message = f"[ { users[ sender_address ] } ]: { msg }"
         connection.send( message.encode() )
 

@@ -2,6 +2,7 @@ import socket
 import threading
 
 from config import config
+import logger
 
 
 def run() -> None:
@@ -28,7 +29,7 @@ def _recieve( connection: socket.socket ) -> None:
             data = connection.recv( 1024 )
             if not data:
                 break
-            print( f"\n[ Server ] { data.decode() }" )
+            logger.log( f"{ data.decode() }" )
         except:
             break
     print( f"[ Connection closed ]" )
