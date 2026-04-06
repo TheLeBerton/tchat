@@ -4,6 +4,7 @@ import json
 
 from .types import MessageType
 from exceptions import InvalidMessageError
+from config import config as _config
 
 
 @dataclass
@@ -19,7 +20,7 @@ class Message:
             type=type,
             sender=sender,
             content=content,
-            timestamp=datetime.now().strftime( "%H:%M" )
+            timestamp=datetime.now().strftime( _config.logger.timestamp_format )
         )
 
     def to_json( self ) -> str:

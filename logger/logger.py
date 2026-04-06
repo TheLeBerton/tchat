@@ -4,12 +4,13 @@ import threading
 from .colors import Colors
 from . import typewriter
 from chat.message.message import Message, MessageType
+from config import config as _config
 
 
 _user_colors: dict[ str, Colors ] = {}
 _available_colors = [ Colors.BLUE, Colors.GREEN, Colors.YELLOW, Colors.RED, Colors.WHITE ]
 
-_typewriter_enabled: bool = False
+_typewriter_enabled: bool = _config.logger.typewriter
 _server_mode: bool = False
 _lock = threading.Lock()
 
@@ -58,13 +59,13 @@ def banner() -> None:
 """
     print( f"{ Colors.BLUE.value }{ chat }{ Colors.RESET.value }" )
 
-def _log( msg: str, delay: float = 0.1 ) -> None:
+def _log( msg: str ) -> None:
     with _lock:
         if _server_mode:
             timestamp = datetime.now().strftime( "%H:%M:%S" )
             print( f"[{ timestamp }] { msg }" )
         elif _typewriter_enabled:
-            typewriter.write( msg, delay )
+            typewriter.write( msg, _config.logger.typewriter_delay )
         else:
             print( msg )
 

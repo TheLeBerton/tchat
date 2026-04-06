@@ -1,6 +1,7 @@
 import time
 
 import logger
+from config import config as _config
 from chat.message.message import Message
 from chat.message.types import MessageType
 from chat.client.connection import Connection
@@ -27,6 +28,6 @@ def run() -> None:
         conn.close()
         if should_reconnect:
             logger.info( "Connection lost. Reconnecting in 5s..." )
-            time.sleep( 5 )
+            time.sleep( _config.client.reconnect_delay )
             continue
         return
