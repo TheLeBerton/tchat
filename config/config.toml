@@ -2,3 +2,7 @@
 ip = "0.0.0.0"
 port = 9999
 waiting_list_size = 1
+
+[ "client" ]
+ip = "127.0.0.1"
+port = 9999

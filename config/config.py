@@ -8,15 +8,24 @@ class ServerConfig:
     port: int
     waiting_list_size: int
 
+
+@dataclass
+class ClientConfig:
+    ip: str
+    port: int
+
+
 @dataclass
 class Config:
     server: ServerConfig
+    client: ClientConfig
 
-def load_config( path: str="config/config.toml" ) -> Config:
+def _load_config( path: str="config/config.toml" ) -> Config:
     with open( path, "rb" ) as f:
         data = tomllib.load( f )
     return Config(
-            server=ServerConfig( **data[ "server" ] )
+            server=ServerConfig( **data[ "server" ] ),
+            client=ClientConfig( **data[ "client" ] )
     )
 
-config = load_config()
+config = _load_config()
