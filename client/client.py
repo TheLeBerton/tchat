@@ -1,19 +1,22 @@
+import sys
 import socket
 import threading
 
 from config import config
 import logger
+from message import Message, MessageType
 
 
 def run() -> None:
+    logger.banner()
     client = socket.socket( socket.AF_INET, socket.SOCK_STREAM )
     client.connect( ( config.client.ip, config.client.port ) )
-    _start_thread( client )
     user_name = input( "Enter user name: " )
     user_info: str = f"USER_NAME: { user_name }"
     client.send( user_info.encode() )
+    _start_thread( client )
     while True:
-        msg = input()
+        msg = input( "> " )
         if msg.lower() == "quit":
             break
         client.send( msg.encode() )
@@ -29,7 +32,12 @@ def _recieve( connection: socket.socket ) -> None:
             data = connection.recv( 1024 )
             if not data:
                 break
-            logger.log( f"{ data.decode() }" )
+            msg = Message.from_json( data.decode() )
+            sys.stdout.write( "\r" )
+            logger.message( msg )
+            sys.stdout.write( "> " )
+            sys.stdout.flush()
         except:
             break
     print( f"[ Connection closed ]" )
+

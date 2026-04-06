@@ -1,8 +1,8 @@
 PYTHON = venv/bin/python3
 
 dev:
-	tmux split-window -h 'sleep 1 && make cli'
-	tmux split-window -v -t 1 'sleep 1 && make cli'
+	tmux split-window -h 'sleep 2 && make cli'
+	tmux split-window -v -t 1 'sleep 5 && make cli'
 	$(PYTHON) main.py serv
 
 kill:

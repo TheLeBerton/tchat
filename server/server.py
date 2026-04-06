@@ -1,7 +1,9 @@
+from datetime import datetime
 import socket
 import threading
 
 from config import config
+from message import Message, MessageType
 import logger
 
 
@@ -9,6 +11,7 @@ users: dict[ tuple, str ] = {}
 connections: dict[ tuple, socket.socket ] = {}
 
 def run() -> None:
+    logger.set_server_mode( True )
     server = socket.socket( socket.AF_INET, socket.SOCK_STREAM )
     _connect_server( server )
     _start_connection_thread( server )
@@ -50,9 +53,17 @@ def _recieve( connection: socket.socket, address: tuple ) -> None:
                 continue
             if "USER_NAME" in data.decode():
                 continue
-            _broadcast( data.decode(), address )
+            chat_msg = Message(                                                                                                                                                                             
+                type=MessageType.CHAT,                                                                                                                                                                      
+                sender=users[ address ],                                                                                                                                                                    
+                content=data.decode(),                                                                                                                                                                      
+                timestamp=datetime.now().strftime( "%H:%M" )                                                                                                                                                
+            ) 
+            logger.message( chat_msg )
+            _broadcast( chat_msg.to_json(), address )
             logger.log( f"[ { users[ address ] } ]: { data.decode() }" )
-        except:
+        except Exception as e:
+            print( e )
             break
     connection.close()
     logger.disconnected( address )
@@ -65,11 +76,18 @@ def _try_add_user( data: bytes, address: tuple ) -> None:
         parts = msg.split( ":" )
         user_name = parts[ 1 ][ 1: ]
         users[ address ] = user_name
+        join_msg = Message(
+                type=MessageType.JOIN,
+                sender=user_name,
+                content="joined the chat",
+                timestamp=datetime.now().strftime( "%H:%M" )
+        )
+        logger.message( join_msg )
+        _broadcast( join_msg.to_json(), address )
 
 def _broadcast( msg: str, sender_address: tuple ) -> None:
     for address, connection in connections.items():
         if address == sender_address:
             continue
-        message = f"[ { users[ sender_address ] } ]: { msg }"
-        connection.send( message.encode() )
+        connection.send( msg.encode() )
 
