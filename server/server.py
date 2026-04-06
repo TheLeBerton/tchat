@@ -3,7 +3,9 @@ import threading
 
 from config import config
 
+
 users: dict[ tuple, str ] = {}
+connections: dict[ tuple, socket.socket ] = {}
 
 def run() -> None:
     server = socket.socket( socket.AF_INET, socket.SOCK_STREAM )
@@ -20,6 +22,7 @@ def _check_connections( server: socket.socket ) -> None:
     while True:
         try:
             connection, address = server.accept()
+            connections[ address ] = connection
             print( f"Connected to { address }" )
             _start_thread( connection, address )
         except:
@@ -47,6 +50,7 @@ def _recieve( connection: socket.socket, address: tuple ) -> None:
                 continue
             if "USER_NAME" in data.decode():
                 continue
+            _broadcast( data.decode(), address )
             print( f"\n[ { users[ address ] } ] { data.decode() }" )
         except:
             break
@@ -61,3 +65,11 @@ def _try_add_user( data: bytes, address: tuple ) -> None:
         parts = msg.split( ":" )
         user_name = parts[ 1 ][ 1: ]
         users[ address ] = user_name
+
+def _broadcast( msg: str, sender_address: tuple ) -> None:
+    for address, connection in connections.items():
+        if address == sender_address:
+            continue
+        message = f"[ { users[ address ] } ] { msg }"
+        connection.send( message.encode() )
+

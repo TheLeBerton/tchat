@@ -32,4 +32,3 @@ def _recieve( connection: socket.socket ) -> None:
         except:
             break
     print( f"[ Connection closed ]" )
-
