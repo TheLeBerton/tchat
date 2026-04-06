@@ -4,6 +4,7 @@ from .. import state
 import logger
 from message import Message, MessageType
 from . import join_handler
+from . import leave_handler
 from . import chat_handler
 from . import command_handler
 
@@ -18,6 +19,7 @@ def recieve( connection: socket.socket, address: tuple ) -> None:
         except Exception as e:
             logger.error( f"{ e }" )
             break
+    leave_handler.handle( address )
     connection.close()
     logger.disconnected( address )
 
