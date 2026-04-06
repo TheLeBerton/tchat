@@ -12,3 +12,5 @@ class JoinHandler:
         broadcast_msg = Message.make( MessageType.JOIN, msg.sender, "joined the chat" )
         state.broadcast( broadcast_msg.to_json(), exclude=address )
         logger.message( broadcast_msg )
+        for payload in state.get_history():
+            state.send_to( address, payload )

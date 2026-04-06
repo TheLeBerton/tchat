@@ -13,4 +13,5 @@ class ChatHandler:
         state.add_user( address, msg.sender )
         chat_msg = Message.make( MessageType.CHAT, username, msg.content)
         state.broadcast( chat_msg.to_json(), exclude=address )
+        state.add_to_history( chat_msg.to_json() )
         logger.message( chat_msg )

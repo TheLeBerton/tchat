@@ -1,6 +1,7 @@
 import socket
 import threading
 
+from config import config as _config
 from exceptions import UnknowUserError
 from chat.message.framing import send_framed
 
@@ -10,6 +11,7 @@ class ServerState:
         self._users: dict[ tuple, str ] = {}
         self._connections: dict[ tuple, socket.socket ] = {}
         self._lock = threading.Lock()
+        self._history: list[ str ] = []
 
 
     def add_connection( self, address: tuple, conn: socket.socket ) -> None:
@@ -59,4 +61,12 @@ class ServerState:
             raise UnknowUserError( f"No connection for { address }" )
         send_framed( conn, payload )
 
+    def add_to_history( self, payload: str ) -> None:
+        with self._lock:
+            self._history.append( payload )
+            if len( self._history ) > _config.chat.history_size:
+                self._history.pop( 0 )
 
+    def get_history( self ) -> list[ str ]:
+        with self._lock:
+            return list( self._history )
