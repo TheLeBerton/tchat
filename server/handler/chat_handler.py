@@ -7,9 +7,11 @@ from message import Message, MessageType
 
 
 def handle( address: tuple, msg: Message ) -> None:
+    with state.lock:
+        sender = state.users[ address ]
     chat_broadcast = Message(                                                                                                                                                                             
         type=MessageType.CHAT,                                                                                                                                                                      
-        sender=state.users[ address ],                                                                                                                                                                    
+        sender=sender,
         content=msg.content,                                                                                                                                                                      
         timestamp=datetime.now().strftime( "%H:%M" )                                                                                                                                                
     ) 

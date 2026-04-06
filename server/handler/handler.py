@@ -33,6 +33,5 @@ def _handle_data( data: bytes, connection: socket.socket, address: tuple ) -> No
         command_handler.handle( connection, msg )
 
 def _is_unknown_user( address: tuple ) -> bool:
-    if address not in state.users:
-        return True
-    return False
+    with state.lock:
+        return address not in state.users

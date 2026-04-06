@@ -24,7 +24,8 @@ def _check_connections( server: socket.socket ) -> None:
     while True:
         try:
             connection, address = server.accept()
-            state.connections[ address ] = connection
+            with state.lock:
+                state.connections[ address ] = connection
             logger.connected( address )
             _start_thread( connection, address )
         except:

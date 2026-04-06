@@ -6,7 +6,8 @@ from .. import state
 
 
 def whoonline( connection: socket.socket ) -> None:
-    online = ", ".join( state.users.values() )
+    with state.lock:
+        online = ", ".join( state.users.values() )
     response = Message(
         type=MessageType.COMMAND,
         sender="server",
