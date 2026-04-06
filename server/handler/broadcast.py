@@ -1,4 +1,5 @@
 from .. import state
+import logger
 
 
 def cast( msg: str, sender_address: tuple ) -> None:
@@ -7,4 +8,8 @@ def cast( msg: str, sender_address: tuple ) -> None:
     for address, connection in connections.items():
         if address == sender_address:
             continue
-        connection.send( msg.encode() )
+        try:
+            connection.send( msg.encode() )
+        except OSError as e:
+            logger.error( f"Failed to send to { address }: { e }" )
+
