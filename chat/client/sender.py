@@ -1,3 +1,6 @@
+from prompt_toolkit import PromptSession
+from prompt_toolkit.patch_stdout import patch_stdout
+
 from chat.message.message import Message
 from chat.message.types import MessageType
 from chat.client.connection import Connection
@@ -10,18 +13,20 @@ class InputLoop:
         self._username = username
 
     def run( self, receiver: ReceiveLoop ) -> bool:
-        while not receiver.connection_lost:
-            try:
-                text = input( "> " )
-            except ( EOFError, KeyboardInterrupt ):
-                if receiver.connection_lost:
-                    return True
-                return False
-            if text == "/quit":
-                return False
-            elif text.startswith( "/" ):
-                self._connection.send( Message.make( MessageType.COMMAND, self._username, text[ 1: ] ) )
-            else:
-                self._connection.send( Message.make( MessageType.CHAT, self._username, text ) )
+        session = PromptSession( "> " )
+        with patch_stdout( raw=True ):
+            while not receiver.connection_lost:
+                try:
+                    text = session.prompt()
+                except ( EOFError, KeyboardInterrupt ):
+                    if receiver.connection_lost:
+                        return True
+                    return False
+                if text == "/quit":
+                    return False
+                elif text.startswith( "/" ):
+                    self._connection.send( Message.make( MessageType.COMMAND, self._username, text[ 1: ] ) )
+                else:
+                    self._connection.send( Message.make( MessageType.CHAT, self._username, text ) )
         return True
 

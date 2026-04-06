@@ -2,6 +2,8 @@ import os
 import signal
 import threading
 
+from prompt_toolkit.patch_stdout import patch_stdout
+
 import logger
 from chat.message.message import Message
 from chat.client.connection import Connection
@@ -26,9 +28,7 @@ class ReceiveLoop:
             try:
                 raw = self._connection.receive()
                 msg = Message.from_json( raw )
-                print( "\r", end="" )
                 logger.message( msg )
-                print( "> ", end="", flush=True )
             except ( MessageFramingError, InvalidMessageError ):
                 break
         print( "\n[ Connection closed ]" )

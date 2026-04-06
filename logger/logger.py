@@ -9,7 +9,7 @@ from chat.message.message import Message, MessageType
 _user_colors: dict[ str, Colors ] = {}
 _available_colors = [ Colors.BLUE, Colors.GREEN, Colors.YELLOW, Colors.RED, Colors.WHITE ]
 
-_typewriter_enabled: bool = True
+_typewriter_enabled: bool = False
 _server_mode: bool = False
 _lock = threading.Lock()
 
