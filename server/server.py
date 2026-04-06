@@ -8,16 +8,23 @@ users: dict[ tuple, str ] = {}
 def run() -> None:
     server = socket.socket( socket.AF_INET, socket.SOCK_STREAM )
     _connect_server( server )
-    connection, address = server.accept()
-    print( f"Connected to { address }" )
-    _start_thread( connection, address )
-    while True:
-        msg = input()
-        if msg.lower() == "quit":
-            break
-        connection.send( msg.encode() )
-    connection.close()
+    _start_connection_thread( server )
     server.close()
+
+def _start_connection_thread( server: socket.socket ) -> None:
+    thread = threading.Thread( target=_check_connections, args=( server, ), daemon=True )
+    thread.start()
+    thread.join()
+
+def _check_connections( server: socket.socket ) -> None:
+    while True:
+        try:
+            connection, address = server.accept()
+            print( f"Connected to { address }" )
+            _start_thread( connection, address )
+        except:
+            break
+    print( f"[ Connection closed ]" )
 
 def _connect_server( server: socket.socket ) -> None:
     server.setsockopt( socket.SOL_SOCKET, socket.SO_REUSEADDR, 1 )
@@ -43,6 +50,7 @@ def _recieve( connection: socket.socket, address: tuple ) -> None:
             print( f"\n[ { users[ address ] } ] { data.decode() }" )
         except:
             break
+    connection.close()
     print( f"[ Connection closed ]" )
 
 def _try_add_user( data: bytes, address: tuple ) -> None:
