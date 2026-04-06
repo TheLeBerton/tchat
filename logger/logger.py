@@ -31,6 +31,8 @@ def message( msg: Message ) -> None:
         _log( f"[ { msg.timestamp } ] { msg.sender } leaved the chat", Colors.RED )
     elif msg.type == MessageType.CHAT:
         _log( f"[ { msg.timestamp } ][ { msg.sender } ]: { msg.content }", _get_user_color( msg.sender ) )
+    elif msg.type == MessageType.COMMAND:
+        _log( f"[ { msg.timestamp } ][ { msg.sender } ]: { msg.content }", Colors.BLUE )
     else:
         _log( msg.to_json(), Colors.WHITE )
 
