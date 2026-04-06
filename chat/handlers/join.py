@@ -6,6 +6,8 @@ from chat.state.server_state import ServerState
 
 class JoinHandler:
     def handle( self, address: tuple, msg: Message, state: ServerState ) -> None:
+        if not msg.sender.strip():
+            return
         state.add_user( address, msg.sender )
         broadcast_msg = Message.make( MessageType.JOIN, msg.sender, "joined the chat" )
         state.broadcast( broadcast_msg.to_json(), exclude=address )

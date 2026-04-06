@@ -35,7 +35,11 @@ class ServerState:
 
     def get_all_usernames( self ) -> list[ str ]:
         with self._lock:
-            return list( self._users.values() )
+            users = []
+            for user in self._users.values():
+                if user.strip():
+                    users.append( user )
+            return users
 
     def broadcast( self, payload: str, exclude: tuple | None = None ) -> None:
         with self._lock:
