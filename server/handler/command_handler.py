@@ -1,6 +1,6 @@
 import socket
 
-from .. import commands
+from . import commands
 import logger
 from message import Message
 

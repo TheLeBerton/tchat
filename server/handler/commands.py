@@ -2,7 +2,7 @@ from datetime import datetime
 import socket
 
 from message import Message, MessageType
-from . import state
+from .. import state
 
 
 def whoonline( connection: socket.socket ) -> None:

@@ -14,20 +14,23 @@ def recieve( connection: socket.socket, address: tuple ) -> None:
             data = connection.recv( 1024 )
             if not data:
                 break
-            msg = Message.from_json( data.decode() )
-            if msg.type == MessageType.JOIN:
-                join_handler.handle( address, msg )
-            if _is_unknown_user( address ):
-                continue
-            if msg.type == MessageType.CHAT:
-                chat_handler.handle( address, msg )
-            elif msg.type == MessageType.COMMAND:
-                command_handler.handle( connection, msg )
+            _handle_data( data, connection, address )
         except Exception as e:
             logger.error( f"{ e }" )
             break
     connection.close()
     logger.disconnected( address )
+
+def _handle_data( data: bytes, connection: socket.socket, address: tuple ) -> None:
+    msg = Message.from_json( data.decode() )
+    if msg.type == MessageType.JOIN:
+        join_handler.handle( address, msg )
+    if _is_unknown_user( address ):
+        return
+    if msg.type == MessageType.CHAT:
+        chat_handler.handle( address, msg )
+    elif msg.type == MessageType.COMMAND:
+        command_handler.handle( connection, msg )
 
 def _is_unknown_user( address: tuple ) -> bool:
     if address not in state.users:
