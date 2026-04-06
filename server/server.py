@@ -36,6 +36,10 @@ def _recieve( connection: socket.socket, address: tuple ) -> None:
             if not data:
                 break
             _try_add_user( data, address )
+            if address not in users:
+                continue
+            if "USER_NAME" in data.decode():
+                continue
             print( f"\n[ { users[ address ] } ] { data.decode() }" )
         except:
             break
