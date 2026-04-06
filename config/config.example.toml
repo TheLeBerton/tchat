@@ -4,5 +4,5 @@ port = 9999
 waiting_list_size = 1
 
 [ "client" ]
-ip = "127.0.0.1"
+ip = "TAILSCALE_IP" # e.g. 132.12.122.1
 port = 9999
