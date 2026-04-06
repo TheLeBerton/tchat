@@ -48,42 +48,39 @@ def _recieve( connection: socket.socket, address: tuple ) -> None:
             data = connection.recv( 1024 )
             if not data:
                 break
-            _try_add_user( data, address )
+            msg = Message.from_json( data.decode() )
+            if msg.type == MessageType.JOIN:
+                users[ address ] = msg.sender
+                join_broadcast = Message( type=MessageType.JOIN, sender=msg.sender, content="joined the chat", timestamp=datetime.now().strftime( "%H:%M" ) )
+                logger.message( join_broadcast )
+                _broadcast( join_broadcast.to_json(), address )
             if address not in users:
                 continue
-            if "USER_NAME" in data.decode():
-                continue
-            chat_msg = Message(                                                                                                                                                                             
-                type=MessageType.CHAT,                                                                                                                                                                      
-                sender=users[ address ],                                                                                                                                                                    
-                content=data.decode(),                                                                                                                                                                      
-                timestamp=datetime.now().strftime( "%H:%M" )                                                                                                                                                
-            ) 
-            logger.message( chat_msg )
-            _broadcast( chat_msg.to_json(), address )
-            logger.log( f"[ { users[ address ] } ]: { data.decode() }" )
+            if msg.type == MessageType.CHAT:
+                chat_broadcast = Message(                                                                                                                                                                             
+                    type=MessageType.CHAT,                                                                                                                                                                      
+                    sender=users[ address ],                                                                                                                                                                    
+                    content=msg.content,                                                                                                                                                                      
+                    timestamp=datetime.now().strftime( "%H:%M" )                                                                                                                                                
+                ) 
+                logger.message( chat_broadcast )
+                _broadcast( chat_broadcast.to_json(), address )
+            elif msg.type == MessageType.COMMAND:
+                if msg.content == "whoonline":
+                    online = ", ".join( users.values() )
+                    response = Message(
+                        type=MessageType.COMMAND,
+                        sender="server",
+                        content=f"Online: { online }",
+                        timestamp=datetime.now().strftime( "%H:%M" )                                                                                                                                                
+                    )
+                    connection.send( response.to_json().encode() )
+                logger.message( msg )
         except Exception as e:
             print( e )
             break
     connection.close()
     logger.disconnected( address )
-
-def _try_add_user( data: bytes, address: tuple ) -> None:
-    if address in users:
-        return
-    msg = data.decode()
-    if "USER_NAME" in msg:
-        parts = msg.split( ":" )
-        user_name = parts[ 1 ][ 1: ]
-        users[ address ] = user_name
-        join_msg = Message(
-                type=MessageType.JOIN,
-                sender=user_name,
-                content="joined the chat",
-                timestamp=datetime.now().strftime( "%H:%M" )
-        )
-        logger.message( join_msg )
-        _broadcast( join_msg.to_json(), address )
 
 def _broadcast( msg: str, sender_address: tuple ) -> None:
     for address, connection in connections.items():
