@@ -70,3 +70,14 @@ class ServerState:
     def get_history( self ) -> list[ str ]:
         with self._lock:
             return list( self._history )
+
+    def is_username_taken( self, username: str ) -> bool:
+        with self._lock:
+            return username in self._users.values()
+
+    def kick( self, address: tuple ) -> None:
+        with self._lock:
+            conn = self._connections.pop( address, None )
+            self._users.pop( address, None)
+        if conn:
+            conn.close()

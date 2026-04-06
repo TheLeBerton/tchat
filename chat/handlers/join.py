@@ -8,6 +8,11 @@ class JoinHandler:
     def handle( self, address: tuple, msg: Message, state: ServerState ) -> None:
         if not msg.sender.strip():
             return
+        if state.is_username_taken( msg.sender ):
+            error_msg = Message.make( MessageType.COMMAND, "server", f"Username '{ msg.sender }' is already taken." )
+            state.send_to( address, error_msg.to_json() )
+            state.kick( address )
+            return
         state.add_user( address, msg.sender )
         broadcast_msg = Message.make( MessageType.JOIN, msg.sender, "joined the chat" )
         state.broadcast( broadcast_msg.to_json(), exclude=address )

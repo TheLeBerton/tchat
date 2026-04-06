@@ -17,7 +17,10 @@ def receive_framed( sock: socket.socket ) -> str:
 def _receive_exact( sock: socket.socket, n: int ) -> bytes:
     buf = b""
     while len( buf ) < n:
-        chunk = sock.recv( n - len( buf ) )
+        try:
+            chunk = sock.recv( n - len( buf ) )
+        except OSError:
+            raise MessageFramingError( "Socket error or connection closed" )
         if not chunk:
             raise MessageFramingError( "Connection closed mid-frame" )
         buf += chunk
