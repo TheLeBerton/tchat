@@ -2,7 +2,7 @@ from datetime import datetime
 
 from .colors import Colors
 from . import typewriter
-from message import Message, MessageType
+from chat.message.message import Message, MessageType
 
 _user_colors: dict[ str, Colors ] = {}
 _available_colors = [ Colors.BLUE, Colors.GREEN, Colors.YELLOW, Colors.RED, Colors.WHITE ]
