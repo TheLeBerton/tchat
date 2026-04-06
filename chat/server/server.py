@@ -19,6 +19,7 @@ class ChatServer:
         self._socket.setsockopt( socket.SOL_SOCKET, socket.SO_REUSEADDR, 1 )
         self._socket.bind( ( config.server.ip, config.server.port ) )
         self._socket.listen( config.server.waiting_list_size )
+        logger.set_server_mode( True )
         logger.info( f"Listening on { config.server.ip }:{ config.server.port }" )
         self._accept_loop()
 

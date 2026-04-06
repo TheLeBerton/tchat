@@ -1,3 +1,5 @@
+import os
+import signal
 import threading
 
 import logger
@@ -31,3 +33,4 @@ class ReceiveLoop:
                 break
         print( "\n[ Connection closed ]" )
         self._connection_lost = True
+        os.kill( os.getpid(), signal.SIGINT )

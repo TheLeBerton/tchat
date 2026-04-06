@@ -14,6 +14,8 @@ class InputLoop:
             try:
                 text = input( "> " )
             except ( EOFError, KeyboardInterrupt ):
+                if receiver.connection_lost:
+                    return True
                 return False
             if text == "/quit":
                 return False
