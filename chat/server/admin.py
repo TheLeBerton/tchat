@@ -45,5 +45,8 @@ class AdminConsole:
 
     def _delayed_stop( self, delay: int ) -> None:
         time.sleep( delay )
+        msg = Message.make( MessageType.COMMAND, "server", f"Server restarting now." )
+        time.sleep( 1 )
+        self._state.broadcast( msg.to_json() )
         self._stop()
         os._exit( 0 )
