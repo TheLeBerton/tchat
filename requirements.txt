@@ -1,0 +1,2 @@
+typer=0.24.1
+promp_toolkit=3.0.52
