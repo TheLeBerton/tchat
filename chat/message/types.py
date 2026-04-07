@@ -6,5 +6,6 @@ class MessageType( Enum ):
     COMMAND = "command"
     JOIN = "join"
     LEAVE = "leave"
+    VERSION = "version"
 
 

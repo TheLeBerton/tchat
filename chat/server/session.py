@@ -1,9 +1,10 @@
 import socket
 
 import logger
+from chat.version import VERSION
 from chat.message.message import Message
 from chat.message.types import MessageType
-from chat.message.framing import receive_framed
+from chat.message.framing import receive_framed, send_framed
 from chat.handlers.base import HandlerRegistry
 from chat.state.server_state import ServerState
 from exceptions import MessageFramingError, InvalidMessageError
@@ -17,6 +18,8 @@ class ClientSession:
         self._registry = registry
 
     def run( self ) -> None:
+        version_msg = Message.make( MessageType.VERSION, "server", VERSION )
+        send_framed( self._connection, version_msg.to_json() )
         try:
             while True:
                 try:

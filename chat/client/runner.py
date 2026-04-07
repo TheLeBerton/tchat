@@ -2,6 +2,7 @@ import time
 
 import logger
 from config import config as _config
+from chat.version import VERSION
 from chat.message.message import Message
 from chat.message.types import MessageType
 from chat.client.connection import Connection
@@ -21,6 +22,11 @@ def run() -> None:
             logger.info( "Cannot connect. Retrying in 5s..." )
             time.sleep( 5 )
             continue
+        version_msg = Message.from_json( conn.receive() )
+        if version_msg.content != VERSION:
+            logger.info( f"Version mismatch — serveur: { version_msg.content }, client: { VERSION }. Telecharge la derniere version." )
+            conn.close()
+            return
         conn.send( Message.make( MessageType.JOIN, username, "" ) )
         receiver = ReceiveLoop( conn )
         receiver.start()
