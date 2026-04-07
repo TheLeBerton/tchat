@@ -1,3 +1,5 @@
+-include .env
+
 PYTHON = venv/bin/python3
 
 dev:
@@ -24,3 +26,7 @@ watch:
 		echo "Server stopped. Restarting is 3s... ( CTRL-C to quit )"; \
 		sleep 3; \
 	done
+
+deploy:
+	@git push origin main
+	@ssh $(PIUSER)@$(PI) "cd tchat && git pull && tmux send-keys -t server C-c '' && tmux send-keys -t server 'make watch' Enter"

@@ -2,4 +2,4 @@ compile_commands.json
 __pycache__
 config.toml
 .gitignore
-.username
+.env
