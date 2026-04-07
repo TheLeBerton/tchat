@@ -28,5 +28,4 @@ watch:
 	done
 
 deploy:
-	@git push origin main
-	@ssh $(PIUSER)@$(PI) "cd tchat && git pull && tmux send-keys -t server C-c '' && tmux send-keys -t server 'make watch' Enter"
+	@bash scripts/deploy.sh
