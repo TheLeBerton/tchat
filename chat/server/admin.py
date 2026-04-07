@@ -1,0 +1,49 @@
+import os
+import threading
+import time
+
+import logger
+from chat.message.message import Message
+from chat.message.types import MessageType
+from chat.state.server_state import ServerState
+
+
+class AdminConsole:
+    def __init__( self, state: ServerState, stop_callback ) -> None:
+        self._state = state
+        self._stop = stop_callback
+
+    def start( self ) -> None:
+        thread = threading.Thread( target=self._loop, daemon=True )
+        thread.start()
+
+    def _loop( self ) -> None:
+        while True:
+            try:
+                cmd = input()
+            except ( EOFError, KeyboardInterrupt ):
+                break
+            self._handle( cmd.strip() )
+
+    def _handle( self, cmd: str ) -> None:
+        if cmd == "/quit":
+            logger.info( "Server shutting down..." )
+            self._stop()
+            os._exit( 0 )
+        elif cmd.startswith( "/restart" ):
+            parts = cmd.split()
+            delay = int( parts[ 1 ] ) if len( parts ) > 1 else 5
+            self._restart( delay )
+        else:
+            logger.error( f"Unknown command: { cmd }" )
+
+    def _restart( self, delay: int ) -> None:
+        msg = Message.make( MessageType.COMMAND, "server", f"Server restarting in { delay }s..." )
+        self._state.broadcast( msg.to_json() )
+        logger.info( f"Restarting in { delay }s..." )
+        threading.Thread( target=self._delayed_stop, args=( delay, ), daemon=True ).start()
+
+    def _delayed_stop( self, delay: int ) -> None:
+        time.sleep( delay )
+        self._stop()
+        os._exit( 0 )

@@ -6,6 +6,7 @@ from config import config
 from chat.state.server_state import ServerState
 from chat.handlers import build_registry
 from chat.server.session import ClientSession
+from chat.server.admin import AdminConsole
 
 
 class ChatServer:
@@ -19,6 +20,7 @@ class ChatServer:
         self._socket.setsockopt( socket.SOL_SOCKET, socket.SO_REUSEADDR, 1 )
         self._socket.bind( ( config.server.ip, config.server.port ) )
         self._socket.listen( config.server.waiting_list_size )
+        AdminConsole( self._state, self.stop ).start()
         logger.set_server_mode( True )
         logger.info( f"Listening on { config.server.ip }:{ config.server.port }" )
         self._accept_loop()
