@@ -8,12 +8,14 @@ from chat.handlers.command import CommandHandler
 from chat.commands.base import CommandRegistry
 from chat.commands.whoonline import WhoOnlineCommand
 from chat.commands.help import HelpCommand
+from chat.commands.status import StatusCommand
 
 
 def build_registry() -> HandlerRegistry:
     commands = CommandRegistry()
     commands.register( "whoonline", WhoOnlineCommand() )
     commands.register( "help", HelpCommand() )
+    commands.register( "status", StatusCommand() )
     registry = HandlerRegistry()
     registry.register( MessageType.JOIN, JoinHandler() )
     registry.register( MessageType.LEAVE, LeaveHandler() )

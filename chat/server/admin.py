@@ -1,7 +1,10 @@
 import os
+import json
 import threading
 import time
 import signal as _signal
+from datetime import datetime
+from pathlib import Path
 
 import logger
 from chat.message.message import Message
@@ -40,6 +43,8 @@ class AdminConsole:
             logger.error( f"Unknown command: { cmd }" )
 
     def _restart( self, delay: int ) -> None:
+        status_file = Path( __file__ ).parents[ 3 ] / "server.status.json"
+        status_file.write_text( json.dumps( { "last_restart": datetime.now().isoformat() } ) )
         msg = Message.make( MessageType.COMMAND, "server", f"Server restarting in { delay }s..." )
         self._state.broadcast( msg.to_json() )
         logger.info( f"Restarting in { delay }s..." )

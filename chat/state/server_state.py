@@ -1,5 +1,6 @@
 import socket
 import threading
+from datetime import datetime
 
 from config import config as _config
 from exceptions import UnknowUserError
@@ -13,6 +14,8 @@ class ServerState:
         self._lock = threading.Lock()
         self._history: list[ str ] = []
         self._first_join_after_restart: bool = True
+        self._start_time: datetime = datetime.now()
+        self._message_count: int = 0
 
 
     def add_connection( self, address: tuple, conn: socket.socket ) -> None:
@@ -65,8 +68,23 @@ class ServerState:
     def add_to_history( self, payload: str ) -> None:
         with self._lock:
             self._history.append( payload )
+            self._message_count += 1
             if len( self._history ) > _config.chat.history_size:
                 self._history.pop( 0 )
+
+    def get_start_time( self ) -> datetime:
+        return self._start_time
+
+    def get_message_count( self ) -> int:
+        with self._lock:
+            return self._message_count
+
+    def get_uptime( self ) -> str:
+        delta = datetime.now() - self._start_time
+        total = int( delta.total_seconds() )
+        h, rem = divmod( total, 3600 )
+        m, s = divmod( rem, 60 )
+        return f"{ h }h { m }m { s }s"
 
     def get_history( self ) -> list[ str ]:
         with self._lock:
