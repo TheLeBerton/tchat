@@ -19,3 +19,6 @@ class JoinHandler:
         logger.message( broadcast_msg )
         for payload in state.get_history():
             state.send_to( address, payload )
+        if state.check_and_clear_restart_flag():
+            msg = Message.make( MessageType.COMMAND, "server", "Server is back online." )
+            state.broadcast( msg.to_json() )

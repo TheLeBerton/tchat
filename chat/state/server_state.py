@@ -12,6 +12,7 @@ class ServerState:
         self._connections: dict[ tuple, socket.socket ] = {}
         self._lock = threading.Lock()
         self._history: list[ str ] = []
+        self._first_join_after_restart: bool = True
 
 
     def add_connection( self, address: tuple, conn: socket.socket ) -> None:
@@ -81,3 +82,11 @@ class ServerState:
             self._users.pop( address, None)
         if conn:
             conn.close()
+
+    def check_and_clear_restart_flag( self ) -> bool:
+        with self._lock:
+            if self._first_join_after_restart:
+                self._first_join_after_restart = False
+                return True
+            return False
+        
