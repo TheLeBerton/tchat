@@ -11,7 +11,7 @@ echo "Deploying to Pi..."
 ssh ${PIUSER}@${PI} "
 	cd tchat &&
 	git pull origin main &&
-	tmux send-keys -t server '/restart 10' Enter &&
+	kill -USR1 \$(pgrep -f 'main.py serv') &&
 	sleep 12 &&
 	tmux kill-session -t server 2>/dev/null || true &&
 	tmux new-session -d -s server 'make watch'

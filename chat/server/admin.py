@@ -1,6 +1,7 @@
 import os
 import threading
 import time
+import signal as _signal
 
 import logger
 from chat.message.message import Message
@@ -12,6 +13,7 @@ class AdminConsole:
     def __init__( self, state: ServerState, stop_callback ) -> None:
         self._state = state
         self._stop = stop_callback
+        _signal.signal( _signal.SIGUSR1, self._on_signal_restart )
 
     def start( self ) -> None:
         thread = threading.Thread( target=self._loop, daemon=True )
@@ -50,3 +52,6 @@ class AdminConsole:
         self._state.broadcast( msg.to_json() )
         self._stop()
         os._exit( 0 )
+
+    def _on_signal_restart( self, sig, frame ) -> None:
+        self._restart( 10 )
