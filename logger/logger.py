@@ -26,7 +26,7 @@ def _get_user_color( user: str ) -> Colors:
 def message( msg: Message ) -> None:
     timestamp = f"{ Colors.WHITE.value }[{ msg.timestamp }]{ Colors.RESET.value }"
     if msg.type == MessageType.JOIN:
-        _log( f"{ timestamp } { Colors.GREEN.value }--> { msg.sender } joined{ Colors.RESET.value }" )
+        _log( f"{ timestamp } { Colors.YELLOW.value }--> { msg.sender } joined{ Colors.RESET.value }" )
     elif msg.type == MessageType.LEAVE:
         _log( f"{ timestamp } { Colors.RED.value }<-- { msg.sender } left{ Colors.RESET.value }" )
     elif msg.type == MessageType.CHAT:
