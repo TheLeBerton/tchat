@@ -8,13 +8,6 @@ echo "Pushing to GitHub..."
 git push origin main
 
 echo "Deploying to Pi..."
-ssh ${PIUSER}@${PI} "
-	cd tchat &&
-	git pull origin main &&
-	kill -USR1 \$(pgrep -f 'main.py serv') 2>/dev/null || true &&
-	sleep 12 &&
-	tmux kill-session -t server 2>/dev/null || true &&
-	tmux new-session -d -s server 'make watch'
-"
+ssh ${PIUSER}@${PI} "cd tchat && git pull origin main && nohup bash -c 'kill -USR1 \$(pgrep -f main.py) 2>/dev/null; sleep 12; tmux kill-session -t server 2>/dev/null; tmux new-session -d -s server \"make watch\"' &>/dev/null &"
 
-echo "Deploy done."
+echo "Deploy done. Server restarting in ~12s..."
