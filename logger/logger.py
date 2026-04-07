@@ -31,7 +31,7 @@ def message( msg: Message ) -> None:
         _log( f"{ timestamp } { Colors.RED.value }<-- { msg.sender } left{ Colors.RESET.value }" )
     elif msg.type == MessageType.CHAT:
         color = _get_user_color( msg.sender ).value
-        _log( f"{ timestamp } { color }<{ msg.sender }>{ Colors.RESET.value } { msg.content }" )
+        _log( f"{ timestamp } { color }{ Colors.BOLD.value }<{ msg.sender }>{ Colors.RESET.value } { msg.content }" )
     elif msg.type == MessageType.COMMAND:
         _log( f"{ timestamp } { Colors.BLUE.value }<server>{ Colors.RESET.value } { msg.content }" )
 

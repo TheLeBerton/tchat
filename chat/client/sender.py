@@ -13,7 +13,7 @@ class InputLoop:
         self._username = username
 
     def run( self, receiver: ReceiveLoop ) -> bool:
-        session = PromptSession( "> " )
+        session = PromptSession( f"[{ self._username }] > " )
         with patch_stdout( raw=True ):
             while not receiver.connection_lost:
                 try:

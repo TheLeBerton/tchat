@@ -12,7 +12,7 @@ from chat.client.sender import InputLoop
 
 def run() -> None:
     logger.banner()
-    username = load_username() or prompt_username()
+    username = prompt_username( load_username() )
     while True:
         conn = Connection()
         try:
