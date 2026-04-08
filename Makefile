@@ -15,7 +15,6 @@ serv:
 	@$(PYTHON) main.py serv
 
 cli:
-	@rm -f $(HOME)/.tchat_username
 	@clear
 	@$(PYTHON) main.py cli
 

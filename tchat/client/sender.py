@@ -89,7 +89,7 @@ class InputLoop:
             if not users:
                 return ""
             names = ", ".join( users )
-            return f" { names } est en train d'écrire..."
+            return f" { names } is typing..."
 
         session = PromptSession(
             f"[{ self._username }] > ",
