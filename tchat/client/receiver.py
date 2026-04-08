@@ -61,9 +61,9 @@ class ReceiveLoop:
                 if msg.type == MessageType.TYPING:
                     self.typing_tracker.set_typing( msg.sender, msg.content )
                 else:
-                    logger.message( msg )
+                    logger.client.message( msg )
             except ( MessageFramingError, InvalidMessageError ):
                 break
-        print( "\n[ Connection closed ]" )
+        logger.client.warning( "\n[ Connection closed ]"  )
         self._connection_lost = True
         os.kill( os.getpid(), signal.SIGINT )

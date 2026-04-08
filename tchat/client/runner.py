@@ -14,19 +14,19 @@ from tchat.client.sender import InputLoop
 
 def run( host: str | None = None ) -> None:
     check_and_update()
-    logger.banner()
+    logger.client.banner()
     username = prompt_username( load_username() )
     while True:
         conn = Connection( host=host )
         try:
             conn.connect()
         except OSError:
-            logger.info( "Cannot connect. Retrying in 5s..." )
+            logger.client.info( "Cannot connect. Retrying in 5s..." )
             time.sleep( 5 )
             continue
         version_msg = Message.from_json( conn.receive() )
         if version_msg.content != VERSION:
-            logger.info( f"Version mismatch — serveur: { version_msg.content }, client: { VERSION }. Telecharge la derniere version." )
+            logger.client.info( f"Version mismatch — serveur: { version_msg.content }, client: { VERSION }. Telecharge la derniere version." )
             conn.close()
             return
         conn.send( Message.make( MessageType.JOIN, username, "" ) )
@@ -35,7 +35,7 @@ def run( host: str | None = None ) -> None:
         should_reconnect = InputLoop( conn, username ).run( receiver )
         conn.close()
         if should_reconnect:
-            logger.info( "Connection lost. Reconnecting in 5s..." )
+            logger.client.info( "Connection lost. Reconnecting in 5s..." )
             time.sleep( _config.client.reconnect_delay )
             continue
         return

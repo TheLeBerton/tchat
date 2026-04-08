@@ -14,4 +14,4 @@ class LeaveHandler:
     def _broadcast_leave( self, state: ServerState, username: str ) -> None:
         leave_msg = Message.make( MessageType.LEAVE, username, "left the chat" )
         state.broadcast( leave_msg.to_json() )
-        logger.message( leave_msg )
+        logger.server.message( leave_msg )

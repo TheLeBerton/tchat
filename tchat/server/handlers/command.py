@@ -10,4 +10,4 @@ class CommandHandler:
 
     def handle( self, address: tuple, msg: Message, state: ServerState ) -> None:
         self._commands.dispatch( address, msg.content, state )
-        logger.message( msg )
+        logger.server.message( msg )

@@ -21,8 +21,7 @@ class ChatServer:
         self._socket.bind( ( config.server.ip, config.server.port ) )
         self._socket.listen( config.server.waiting_list_size )
         AdminConsole( self._state, self.stop ).start()
-        logger.set_server_mode( True )
-        logger.info( f"Listening on { config.server.ip }:{ config.server.port }" )
+        logger.server.info( f"Listening on { config.server.ip }:{ config.server.port }" )
         self._accept_loop()
 
     def stop( self ) -> None:
@@ -38,7 +37,7 @@ class ChatServer:
             except OSError:
                 break
             self._state.add_connection( address, conn )
-            logger.connected( address )
+            logger.server.connected( address )
             session = ClientSession( conn, address, self._state, self._registry )
             thread = threading.Thread( target=session.run, daemon=True )
             thread.start()

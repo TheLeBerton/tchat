@@ -32,7 +32,7 @@ class AdminConsole:
 
     def _handle( self, cmd: str ) -> None:
         if cmd == "/quit":
-            logger.info( "Server shutting down..." )
+            logger.server.info( "Server shutting down..." )
             self._stop()
             os._exit( 0 )
         elif cmd.startswith( "/restart" ):
@@ -40,21 +40,21 @@ class AdminConsole:
             delay = int( parts[ 1 ] ) if len( parts ) > 1 else 5
             self._restart( delay )
         else:
-            logger.error( f"Unknown command: { cmd }" )
+            logger.server.error( f"Unknown command: { cmd }" )
 
     def _restart( self, delay: int ) -> None:
         status_file = Path( __file__ ).parents[ 3 ] / "server.status.json"
         status_file.write_text( json.dumps( { "last_restart": datetime.now().isoformat() } ) )
         msg = Message.make( MessageType.COMMAND, "server", f"Server restarting in { delay }s..." )
         self._state.broadcast( msg.to_json() )
-        logger.info( f"Restarting in { delay }s..." )
+        logger.server.info( f"Restarting in { delay }s..." )
         threading.Thread( target=self._delayed_stop, args=( delay, ), daemon=True ).start()
 
     def _delayed_stop( self, delay: int ) -> None:
         time.sleep( delay )
         msg = Message.make( MessageType.COMMAND, "server", "Server restarting now." )
         self._state.broadcast( msg.to_json() )
-        logger.info( "Restarting now." )
+        logger.server.info( "Restarting now." )
         time.sleep( 1 )
         self._stop()
         os._exit( 0 )

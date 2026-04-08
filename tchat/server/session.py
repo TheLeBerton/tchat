@@ -29,11 +29,11 @@ class ClientSession:
                 try:
                     msg = Message.from_json( raw )
                 except InvalidMessageError as e:
-                    logger.error( str( e ) )
+                    logger.server.error( str( e ) )
                     continue
                 self._registry.dispatch( self._address, msg, self._state )
         finally:
             leave_msg = Message.make( MessageType.LEAVE, "", "" )
             self._registry.dispatch( self._address, leave_msg, self._state )
             self._connection.close()
-            logger.disconnected( self._address )
+            logger.server.disconnected( self._address )

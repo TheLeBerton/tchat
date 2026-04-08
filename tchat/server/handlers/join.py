@@ -28,7 +28,7 @@ class JoinHandler:
     def _broadcast_join_message( self, state: ServerState, msg: Message, address: tuple ) -> None:
         broadcast_msg = Message.make( MessageType.JOIN, msg.sender, "joined the chat" )
         state.broadcast( broadcast_msg.to_json(), exclude=address )
-        logger.message( broadcast_msg )
+        logger.server.message( broadcast_msg )
 
     def _send_history_to_user( self, state: ServerState, address: tuple ) -> None:
         for payload in state.get_history():
