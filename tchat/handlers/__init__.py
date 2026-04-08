@@ -9,6 +9,7 @@ from tchat.commands.base import CommandRegistry
 from tchat.commands.whoonline import WhoOnlineCommand
 from tchat.commands.help import HelpCommand
 from tchat.commands.status import StatusCommand
+from tchat.handlers.typing import TypingHandler
 
 
 def build_registry() -> HandlerRegistry:
@@ -21,4 +22,5 @@ def build_registry() -> HandlerRegistry:
     registry.register( MessageType.LEAVE, LeaveHandler() )
     registry.register( MessageType.CHAT, ChatHandler() )
     registry.register( MessageType.COMMAND, CommandHandler( commands ) )
+    registry.register( MessageType.TYPING, TypingHandler() )
     return registry

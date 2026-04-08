@@ -6,14 +6,44 @@ from prompt_toolkit.patch_stdout import patch_stdout
 
 from tchat import logger
 from tchat.message.message import Message
+from tchat.message.types import MessageType
 from tchat.client.connection import Connection
 from tchat.exceptions import MessageFramingError, InvalidMessageError
+
+
+class TypingTracker:
+    EXPIRY = 5.0
+
+    def __init__( self ) -> None:
+        self._typing: dict[ str, threading.Timer ] = {}
+        self._lock = threading.Lock()
+
+    def set_typing( self, username: str, state: str ) -> None:
+        with self._lock:
+            if username in self._typing:
+                self._typing[ username ].cancel()
+            if state == "start":
+                t = threading.Timer( self.EXPIRY, self._expire, args=[ username ] )
+                t.daemon = True
+                t.start()
+                self._typing[ username ] = t
+            else:
+                self._typing.pop( username, None )
+
+    def _expire( self, username: str ) -> None:
+        with self._lock:
+            self._typing.pop( username, None )
+
+    def get_typing_users( self ) -> list[ str ]:
+        with self._lock:
+            return list( self._typing.keys() )
 
 
 class ReceiveLoop:
     def __init__( self, connection: Connection ) -> None:
         self._connection = connection
         self._connection_lost = False
+        self.typing_tracker = TypingTracker()
 
     @property
     def connection_lost( self ) -> bool:
@@ -28,7 +58,10 @@ class ReceiveLoop:
             try:
                 raw = self._connection.receive()
                 msg = Message.from_json( raw )
-                logger.message( msg )
+                if msg.type == MessageType.TYPING:
+                    self.typing_tracker.set_typing( msg.sender, msg.content )
+                else:
+                    logger.message( msg )
             except ( MessageFramingError, InvalidMessageError ):
                 break
         print( "\n[ Connection closed ]" )

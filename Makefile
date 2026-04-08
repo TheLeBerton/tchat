@@ -27,12 +27,11 @@ watch:
 		sleep 3; \
 	done
 
-test:
-	@tmux new-session -d -s tchat-test 2>/dev/null || true
-	@tmux send-keys -t tchat-test "$(PYTHON) main.py serv" Enter
-	@tmux split-window -h -t tchat-test
-	@tmux send-keys -t tchat-test "sleep 1 && $(PYTHON) main.py cli --host 127.0.0.1" Enter
-	@tmux attach -t tchat-test
+test-serv:
+	$(PYTHON) main.py serv
+
+test-cli:
+	$(PYTHON) main.py cli --host 127.0.0.1
 
 deploy:
 	@bash scripts/deploy.sh

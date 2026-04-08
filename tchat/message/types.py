@@ -7,3 +7,4 @@ class MessageType( Enum ):
     JOIN = "join"
     LEAVE = "leave"
     VERSION = "version"
+    TYPING = "typing"
