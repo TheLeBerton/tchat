@@ -12,7 +12,7 @@ from tchat.exceptions import MessageFramingError, InvalidMessageError
 
 
 class TypingTracker:
-    EXPIRY = 5.0
+    EXPIRY = 2.0
 
     def __init__( self ) -> None:
         self._typing: dict[ str, threading.Timer ] = {}

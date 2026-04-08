@@ -38,3 +38,6 @@ deploy:
 
 publish-client:
 	@bash scripts/sync-client.sh
+
+version:
+	./scripts/bump_version.py
