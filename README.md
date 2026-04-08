@@ -7,31 +7,41 @@ Welcome! This program lets you chat live with the whole family, straight from yo
 ## What you need before starting
 
 - A Mac or a PC running Linux ( or Windows with WSL )
-- Tailscale installed and connected *( ask leberton if you're not sure )*
-- Python 3.11 or newer *( ask leberton if you don't know )*
-- An established SSH connection *( ask leberton if you don't know )*
-- git installed *( ask leberton if you don't know )*
+- Python 3.11 or newer *( ask leberton if you're not sure )*
+
+That's it.
 
 ---
 
 ## Install — only once
 
-Open a terminal and type these two commands, one after the other:
+Open a terminal and run:
 
 ```
-cd tchat
-bash install.sh
+python3 -m pip install https://github.com/TheLeBerton/tchat/archive/refs/heads/main.tar.gz
 ```
 
-You'll see `Done.` at the end if everything worked.
-
-**Then**, open the file `config/config.toml` with any text editor and replace:
+Then launch it:
 
 ```
-ip = "TAILSCALE_IP"
+tchat
 ```
 
-with the Tailscale IP address of the server *(leberton will give it to you — it looks like `100.x.x.x`)*.
+The first time it runs, it will create a config file and ask you to set the server IP *(leberton will give it to you — it looks like `100.x.x.x`)*.
+
+> **If `tchat` is not found**, find where it was installed:
+> ```
+> python3 -c "import sysconfig; print(sysconfig.get_path('scripts'))"
+> ```
+> And run it with the full path shown.
+
+---
+
+## Update
+
+```
+python3 -m pip install --upgrade https://github.com/TheLeBerton/tchat/archive/refs/heads/main.tar.gz
+```
 
 ---
 
@@ -40,7 +50,7 @@ with the Tailscale IP address of the server *(leberton will give it to you — i
 Every time you want to chat, just open a terminal and type:
 
 ```
-make cli
+tchat
 ```
 
 A big logo appears, then it asks for your name. Type it, press Enter, and you're in!
@@ -60,9 +70,6 @@ A big logo appears, then it asks for your name. Type it, press Enter, and you're
 ---
 
 ## Something's not working?
-
-**Nothing happens when you type `make cli`?**
-Make sure you're in the right folder. Type `cd tchat` first, then try again.
 
 **It keeps saying "Cannot connect"?**
 The server might be off. Send a message to leberton and he'll start it back up.
