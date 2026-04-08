@@ -8,5 +8,8 @@ class TypingHandler:
         username = state.get_username( address )
         if username is None:
             return
-        payload = Message.make( MessageType.TYPING, username, msg.content ).to_json()
-        state.broadcast( payload, exclude=address )
+        self._broadcast_user_is_typing( username, address, msg, state )
+
+    def _broadcast_user_is_typing( self, username: str, address: tuple, msg: Message, state: ServerState ) -> None:
+        tp_msg = Message.make( MessageType.TYPING, username, msg.content )
+        state.broadcast( tp_msg.to_json(), exclude=address )

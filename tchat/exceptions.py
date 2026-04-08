@@ -20,3 +20,7 @@ class CommandError( ChatError ):
 
 class ConfigError( ChatError ):
     """Raised when configuration is missing or invalid."""
+
+
+class JoinError( ChatError ):
+    """Raised when a JOIN request is invalid ( empty or taken username )."""

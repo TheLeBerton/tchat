@@ -9,7 +9,9 @@ class LeaveHandler:
         username = state.remove_user( address )
         if username is None:
             return
-        state.add_user( address, msg.sender )
+        self._broadcast_leave( state, username )
+
+    def _broadcast_leave( self, state: ServerState, username: str ) -> None:
         leave_msg = Message.make( MessageType.LEAVE, username, "left the chat" )
         state.broadcast( leave_msg.to_json() )
         logger.message( leave_msg )
