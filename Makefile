@@ -41,3 +41,6 @@ publish-client:
 
 version:
 	./scripts/bump_version.py
+
+log:
+	@cat $(HOME)/.local/share/tchat/server.log

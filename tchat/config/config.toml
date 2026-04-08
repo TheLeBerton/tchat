@@ -12,8 +12,8 @@ reconnect_delay = 5
 typewriter = false
 typewriter_delay = 0.02
 timestamp_format = "%H:%M"
-log_to_file = false
-log_file = "chat.log"
+log_to_file = true
+log_file = "~/.local/share/tchat/server.log"
 
 [chat]
 max_message_length = 500
