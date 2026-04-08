@@ -41,6 +41,8 @@ The first time it runs, it will create a config file and ask you to set the serv
 
 ```
 python3 -m pip install --upgrade https://github.com/TheLeBerton/tchat/archive/refs/heads/main.tar.gz
+or
+python3 -m pip install --force-reinstall https://github.com/TheLeBerton/tchat/archive/refs/heads/main.tar.gz
 ```
 
 ---
