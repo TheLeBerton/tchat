@@ -30,6 +30,7 @@ test-serv:
 	$(PYTHON) main.py serv
 
 test-cli:
+	@rm -f $(HOME)/.tchat_username
 	$(PYTHON) main.py cli --host 127.0.0.1
 
 deploy:
