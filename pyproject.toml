@@ -1,0 +1,21 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "tchat"
+version = "0.8.0"
+description = "tchat — server and client"
+requires-python = ">=3.11"
+dependencies = [
+    "typer>=0.24.1",
+    "prompt_toolkit>=3.0.52",
+]
+
+[project.scripts]
+tchat = "tchat.client.runner:run"
+tchat-server = "tchat.server.server:ChatServer"
+
+[tool.hatch.build.targets.wheel]
+packages = ["tchat"]
+include = ["tchat/**/*.toml"]

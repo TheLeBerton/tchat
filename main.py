@@ -1,7 +1,7 @@
 import typer
 
-from chat.server.server import ChatServer
-from chat.client.runner import run as client_run
+from tchat.server.server import ChatServer
+from tchat.client.runner import run as client_run
 
 app: typer.Typer = typer.Typer()
 
@@ -13,9 +13,9 @@ def serv():
         print( f"[ SERVER ERROR ]: { e }" )
 
 @app.command()
-def cli():
+def cli( host: str = typer.Option( None, "--host", help="Override server IP (e.g. 127.0.0.1 for local testing)" ) ):
     try:
-        client_run()
+        client_run( host=host )
     except Exception as e:
         print( f"[ CLIENT ERROR ]: { e }" )
 

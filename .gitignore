@@ -3,3 +3,5 @@ __pycache__
 config.toml
 .gitignore
 .env
+dist/
+*.egg-info/

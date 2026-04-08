@@ -9,6 +9,8 @@ Welcome! This program lets you chat live with the whole family, straight from yo
 - A Mac or a PC running Linux ( or Windows with WSL )
 - Tailscale installed and connected *( ask leberton if you're not sure )*
 - Python 3.11 or newer *( ask leberton if you don't know )*
+- An established SSH connection *( ask leberton if you don't know )*
+- git installed *( ask leberton if you don't know )*
 
 ---
 
