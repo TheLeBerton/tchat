@@ -1,15 +1,15 @@
 from tchat.message.types import MessageType
-from tchat.state.server_state import ServerState
-from tchat.handlers.base import HandlerRegistry
-from tchat.handlers.join import JoinHandler
-from tchat.handlers.leave import LeaveHandler
-from tchat.handlers.chat import ChatHandler
-from tchat.handlers.command import CommandHandler
-from tchat.commands.base import CommandRegistry
-from tchat.commands.whoonline import WhoOnlineCommand
-from tchat.commands.help import HelpCommand
-from tchat.commands.status import StatusCommand
-from tchat.handlers.typing import TypingHandler
+from tchat.server.state.server_state import ServerState
+from tchat.server.handlers.base import HandlerRegistry
+from tchat.server.handlers.join import JoinHandler
+from tchat.server.handlers.leave import LeaveHandler
+from tchat.server.handlers.chat import ChatHandler
+from tchat.server.handlers.command import CommandHandler
+from tchat.server.commands.base import CommandRegistry
+from tchat.server.commands.whoonline import WhoOnlineCommand
+from tchat.server.commands.help import HelpCommand
+from tchat.server.commands.status import StatusCommand
+from tchat.server.handlers.typing import TypingHandler
 
 
 def build_registry() -> HandlerRegistry:

@@ -1,6 +1,6 @@
 from typing import Protocol
 
-from tchat.state.server_state import ServerState
+from tchat.server.state.server_state import ServerState
 from tchat.exceptions import CommandError
 
 

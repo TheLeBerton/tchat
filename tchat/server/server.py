@@ -3,8 +3,8 @@ import threading
 
 from tchat import logger
 from tchat.config import config
-from tchat.state.server_state import ServerState
-from tchat.handlers import build_registry
+from tchat.server.state.server_state import ServerState
+from tchat.server.handlers import build_registry
 from tchat.server.session import ClientSession
 from tchat.server.admin import AdminConsole
 

@@ -5,8 +5,8 @@ from tchat.version import VERSION
 from tchat.message.message import Message
 from tchat.message.types import MessageType
 from tchat.message.framing import receive_framed, send_framed
-from tchat.handlers.base import HandlerRegistry
-from tchat.state.server_state import ServerState
+from tchat.server.handlers.base import HandlerRegistry
+from tchat.server.state.server_state import ServerState
 from tchat.exceptions import MessageFramingError, InvalidMessageError
 
 

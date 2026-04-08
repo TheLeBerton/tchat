@@ -1,7 +1,7 @@
 from tchat import logger
 from tchat.message.message import Message
-from tchat.state.server_state import ServerState
-from tchat.commands.base import CommandRegistry
+from tchat.server.state.server_state import ServerState
+from tchat.server.commands.base import CommandRegistry
 
 
 class CommandHandler:

@@ -1,6 +1,6 @@
 from tchat.message.message import Message
 from tchat.message.types import MessageType
-from tchat.state.server_state import ServerState
+from tchat.server.state.server_state import ServerState
 
 
 class HelpCommand:
