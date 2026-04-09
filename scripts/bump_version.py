@@ -6,8 +6,15 @@ import subprocess
 from pathlib import Path
 
 
-VERSION_FILE = Path("tchat/version.py")
+VERSION_FILE = Path("packages/tchat-shared/tchat_shared/version.py")
 VERSION_PATTERN = r'VERSION\s*=\s*"v(\d+)\.(\d+)\.(\d+)"'
+
+PYPROJECT_FILES = [
+    Path("packages/tchat-shared/pyproject.toml"),
+    Path("packages/tchat-server/pyproject.toml"),
+    Path("packages/tchat-client/pyproject.toml"),
+]
+PYPROJECT_VERSION_PATTERN = r'(version\s*=\s*)"[\d.]+"'
 
 
 def main() -> None:
@@ -21,7 +28,8 @@ def main() -> None:
     if tag_exists(new_version):
         raise SystemExit(f"Tag already exists: {new_version}")
 
-    run(["git", "add", str(VERSION_FILE)])
+    files_to_add = [str(VERSION_FILE)] + [str(p) for p in PYPROJECT_FILES]
+    run(["git", "add"] + files_to_add)
     run(["git", "commit", "--amend", "--no-edit"])
     run(["git", "tag", new_version])
 
@@ -152,6 +160,13 @@ def write_version(version: tuple[int, int, int]) -> str:
         content,
     )
     VERSION_FILE.write_text(updated, encoding="utf-8")
+
+    bare_version = f"{major}.{minor}.{patch}"
+    for pyproject in PYPROJECT_FILES:
+        content = pyproject.read_text(encoding="utf-8")
+        updated = re.sub(PYPROJECT_VERSION_PATTERN, rf'\g<1>"{bare_version}"', content)
+        pyproject.write_text(updated, encoding="utf-8")
+
     return new_version
 
 
