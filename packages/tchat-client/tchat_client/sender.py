@@ -92,15 +92,17 @@ class InputLoop:
                 return ""
             names = ", ".join( users )
             return f" { names } is typing..."
-
-        session = PromptSession(
-            f"[{ self._username }] > ",
-            history=FileHistory( str( history_file ) ),
-            completer=CommandCompleter(),
-            complete_while_typing=True,
-            bottom_toolbar=bottom_toolbar,
-            refresh_interval=0.5,
-        )
+        try:
+            session = PromptSession(
+                f"[{ self._username }] > ",
+                history=FileHistory( str( history_file ) ),
+                completer=CommandCompleter(),
+                complete_while_typing=True,
+                bottom_toolbar=bottom_toolbar,
+                refresh_interval=0.5,
+            )
+        except KeyboardInterrupt:
+            return receiver.connection_lost
 
         def pre_run():
             session.app.current_buffer.on_text_changed += notifier.on_text_changed
