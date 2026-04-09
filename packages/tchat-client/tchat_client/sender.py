@@ -15,7 +15,7 @@ from tchat_client.connection import Connection
 from tchat_client.receiver import ReceiveLoop
 
 
-COMMANDS = [ "/whoonline", "/status", "/help", "/quit" ]
+COMMANDS = [ "/whoonline", "/kick", "/status", "/help", "/quit" ]
 
 
 class CommandCompleter( Completer ):

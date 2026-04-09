@@ -7,4 +7,5 @@ class Account:
     address: tuple[ str, int ]
     connection: socket.socket
     username: str = ""
+    is_admin: bool = False
 

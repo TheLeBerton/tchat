@@ -23,6 +23,8 @@ class JoinHandler:
 
     def _register_user( self, state: ServerState, msg: Message, address: tuple ) -> None:
         state.add_user( address, msg.sender )
+        if msg.sender in _config.admin.usernames:
+            state.set_admin( address )
         self._broadcast_join_message( state, msg, address )
         self._send_history_to_user( state, address )
         self._send_welcome_to_user( state, address, msg.sender )

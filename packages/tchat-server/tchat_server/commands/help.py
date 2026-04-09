@@ -6,6 +6,6 @@ from tchat_server.state.server_state import ServerState
 
 class HelpCommand:
 
-    def execute( self, address: tuple, state: ServerState ) -> None:
+    def execute( self, address: tuple, args: str, state: ServerState ) -> None:
         response = Message.make( MessageType.COMMAND, "server", _config.messages.help_text )
         state.send_to( address, response.to_json() )

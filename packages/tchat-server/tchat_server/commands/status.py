@@ -21,7 +21,7 @@ class StatusData:
 
 
 class StatusCommand:
-    def execute( self, address: tuple, state: ServerState ) -> None:
+    def execute( self, address: tuple, args: str, state: ServerState ) -> None:
         data = self._get_data( state )
         lines = "\n".join( self._get_lines( data ) )
         msg = Message.make( MessageType.COMMAND, "server", lines )

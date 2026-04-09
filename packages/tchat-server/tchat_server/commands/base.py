@@ -5,7 +5,7 @@ from tchat_shared.exceptions import CommandError
 
 
 class Command( Protocol ):
-    def execute( self, address: tuple, state: ServerState ) -> None: ...
+    def execute( self, address: tuple, args: str, state: ServerState ) -> None: ...
 
 
 class CommandRegistry:
@@ -15,8 +15,9 @@ class CommandRegistry:
     def register( self, name: str, command: Command ) -> None:
         self._commands[ name ] = command
 
-    def dispatch( self, address: tuple, name: str, state: ServerState ) -> None:
+    def dispatch( self, address: tuple, content: str, state: ServerState ) -> None:
+        name, _, args = content.partition( " " )
         command = self._commands.get( name )
         if command is None:
             raise CommandError( f"Unknown command: { name }" )
-        command.execute( address, state )
+        command.execute( address, args, state )

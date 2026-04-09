@@ -5,7 +5,7 @@ from tchat_server.state.server_state import ServerState
 
 
 class WhoOnlineCommand:
-    def execute( self, address: tuple, state: ServerState ) -> None:
+    def execute( self, address: tuple, args: str, state: ServerState ) -> None:
         usernames = state.get_all_usernames()
         online = ", ".join( usernames ) if usernames else _config.messages.nobody_online
         response = Message.make( MessageType.COMMAND, "server", _config.messages.online_format.format( online ) )

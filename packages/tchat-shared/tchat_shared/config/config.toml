@@ -53,3 +53,6 @@ Available commands:
  - /quit
 
 root@server:~$"""
+
+[admin]
+usernames = [ "admin" ]

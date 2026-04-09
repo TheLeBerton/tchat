@@ -121,3 +121,23 @@ class ServerState:
                 self._first_join_after_restart = False
                 return True
             return False
+
+    def set_admin( self, address: tuple ) -> None:
+        with self._lock:
+            account = self._find( address )
+            if account:
+                account.is_admin = True
+
+    def is_admin( self, address: tuple ) -> bool:
+        with self._lock:
+            account = self._find( address )
+            if account:
+                return account.is_admin
+            return False
+
+    def find_by_username( self, username: str ) -> Account | None:
+        with self._lock:
+            for account in self._accounts:
+                if account.username == username:
+                    return account
+        return None
