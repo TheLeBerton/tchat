@@ -1,0 +1,18 @@
+from tchat_shared import logger
+from tchat_shared.config import config as _config
+from tchat_shared.message.message import Message
+from tchat_shared.message.types import MessageType
+from tchat_server.state.server_state import ServerState
+
+
+class LeaveHandler:
+    def handle( self, address: tuple, msg: Message, state: ServerState ) -> None:
+        username = state.remove_user( address )
+        if username is None:
+            return
+        self._broadcast_leave( state, username )
+
+    def _broadcast_leave( self, state: ServerState, username: str ) -> None:
+        leave_msg = Message.make( MessageType.LEAVE, username, _config.messages.broadcast_left )
+        state.broadcast( leave_msg.to_json() )
+        logger.server.message( leave_msg )
