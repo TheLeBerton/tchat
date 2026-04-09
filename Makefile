@@ -27,7 +27,8 @@ test-cli:
 	$(PYTHON) main.py cli --host 127.0.0.1
 
 test-pip:
-	python -m venv /tmp/test-tchat && /tmp/test-tchat/bin/pip install tchat-client && /tmp/test-tchat/bin/tchat
+	@rm -rf /tmp/test-tchat
+	@python -m venv /tmp/test-tchat && /tmp/test-tchat/bin/pip install tchat-client && /tmp/test-tchat/bin/tchat
 
 sync-client:
 	@bash scripts/sync-client.sh
