@@ -1,6 +1,6 @@
 #!/bin/bash
 # Script d'installation de tchat pour les users.
-# Usage: curl -sSL https://raw.githubusercontent.com/TheLeBerton/tchat-client/main/install.sh | bash
+# Usage: curl -sSL https://raw.githubusercontent.com/TheLeBerton/tchat/main/scripts/client-install.sh | bash
 
 set -e
 
