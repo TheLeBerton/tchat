@@ -25,10 +25,15 @@ class JoinHandler:
             state.send_to( address, error_msg.to_json() )
             state.kick( address )
             raise JoinError( f"username taken: { msg.sender }" )
+        if msg.sender in _config.admin.usernames and address[ 0 ] not in _config.admin.ips:
+            error_msg = Message.make( MessageType.COMMAND, "server", "Username reserved" )
+            state.send_to( address, error_msg.to_json() )
+            state.kick( address )
+            raise JoinError( f"reserved username: { msg.sender }" )
 
     def _register_user( self, state: ServerState, msg: Message, address: tuple ) -> None:
         state.add_user( address, msg.sender )
-        if msg.sender in _config.admin.usernames:
+        if msg.sender in _config.admin.usernames and address[ 0 ] in _config.admin.ips:
             state.set_admin( address )
         self._broadcast_join_message( state, msg, address )
         self._send_history_to_user( state, address )

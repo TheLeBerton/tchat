@@ -8,7 +8,7 @@ from tchat_shared.message.types import MessageType
 from tchat_shared.message.framing import receive_framed, send_framed
 from tchat_server.handlers.base import HandlerRegistry
 from tchat_server.state.server_state import ServerState
-from tchat_shared.exceptions import MessageFramingError, InvalidMessageError, CommandError
+from tchat_shared.exceptions import MessageFramingError, InvalidMessageError, CommandError, JoinError
 
 
 class ClientSession:
@@ -41,5 +41,5 @@ class ClientSession:
         try:
             msg = Message.from_json( raw )
             self._registry.dispatch( self._address, msg, self._state )
-        except ( InvalidMessageError, CommandError ) as e:
+        except ( InvalidMessageError, CommandError, JoinError ) as e:
             logger.server.error( str( e ) )

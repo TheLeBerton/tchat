@@ -21,7 +21,7 @@ watch:
 
 test-cli:
 	@rm -f $(HOME)/.tchat_username
-	@uv run tchat --host 127.0.0.1
+	@uv run python main.py cli --host 127.0.0.1
 
 
 restart-serv:

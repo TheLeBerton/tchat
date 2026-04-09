@@ -66,6 +66,7 @@ class MessagesConfig:
 @dataclass
 class AdminConfig:
     usernames: list[ str ]
+    ips: list[ str ]
 
 
 @dataclass
