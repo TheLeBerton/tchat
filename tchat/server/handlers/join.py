@@ -1,4 +1,5 @@
 from tchat import logger
+from tchat.config import config as _config
 from tchat.message.message import Message
 from tchat.message.types import MessageType
 from tchat.server.state.server_state import ServerState
@@ -15,7 +16,7 @@ class JoinHandler:
         if not msg.sender.strip():
             raise JoinError( "empty username" )
         if state.is_username_taken( msg.sender ):
-            error_msg = Message.make( MessageType.COMMAND, "server", f"Username '{ msg.sender }' is already taken." )
+            error_msg = Message.make( MessageType.COMMAND, "server", _config.messages.username_taken.format( msg.sender ) )
             state.send_to( address, error_msg.to_json() )
             state.kick( address )
             raise JoinError( f"username taken: { msg.sender }" )
@@ -26,7 +27,7 @@ class JoinHandler:
         self._send_history_to_user( state, address )
 
     def _broadcast_join_message( self, state: ServerState, msg: Message, address: tuple ) -> None:
-        broadcast_msg = Message.make( MessageType.JOIN, msg.sender, "joined the chat" )
+        broadcast_msg = Message.make( MessageType.JOIN, msg.sender, _config.messages.broadcast_joined )
         state.broadcast( broadcast_msg.to_json(), exclude=address )
         logger.server.message( broadcast_msg )
 
@@ -36,5 +37,5 @@ class JoinHandler:
 
     def _handle_server_restart( self, state: ServerState ) -> None:
         if state.check_and_clear_restart_flag():
-            msg = Message.make( MessageType.COMMAND, "server", "Server is back online." )
+            msg = Message.make( MessageType.COMMAND, "server", _config.messages.server_online )
             state.broadcast( msg.to_json() )

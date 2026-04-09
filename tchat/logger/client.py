@@ -1,5 +1,6 @@
 from . import base
 from .colors import Colors
+from tchat.config import config as _config
 from tchat.message.message import Message, MessageType
 
 
@@ -20,9 +21,9 @@ def error( msg: str ) -> None:
 
 def message( msg: Message ) -> None:
     if msg.type == MessageType.JOIN:
-        _emit( f"{ _tag('JOIN', Colors.GREEN.value) } { msg.sender } has entered the chat" )
+        _emit( f"{ _tag('JOIN', Colors.GREEN.value) } { msg.sender } { _config.messages.user_joined }" )
     elif msg.type == MessageType.LEAVE:
-        _emit( f"{ _tag('LEAVE', Colors.YELLOW.value) } { msg.sender } has left the chat" )
+        _emit( f"{ _tag('LEAVE', Colors.YELLOW.value) } { msg.sender } { _config.messages.user_left }" )
     elif msg.type == MessageType.CHAT:
         color = base.get_user_color( msg.sender ).value
         _emit( f"{ _tag('MSG', Colors.WHITE.value) } { color }{ Colors.BOLD.value }{ msg.sender }{ Colors.RESET.value }: { msg.content }" )

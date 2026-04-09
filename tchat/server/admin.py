@@ -7,6 +7,7 @@ from datetime import datetime
 from pathlib import Path
 
 from tchat import logger
+from tchat.config import config as _config
 from tchat.message.message import Message
 from tchat.message.types import MessageType
 from tchat.server.state.server_state import ServerState
@@ -45,7 +46,7 @@ class AdminConsole:
     def _restart( self, delay: int ) -> None:
         status_file = Path( __file__ ).parents[ 3 ] / "server.status.json"
         status_file.write_text( json.dumps( { "last_restart": datetime.now().isoformat() } ) )
-        msg = Message.make( MessageType.COMMAND, "server", f"Server restarting in { delay }s..." )
+        msg = Message.make( MessageType.COMMAND, "server", _config.messages.server_restart.format( delay ) )
         self._state.broadcast( msg.to_json() )
         logger.server.info( f"Restarting in { delay }s..." )
         threading.Thread( target=self._delayed_stop, args=( delay, ), daemon=True ).start()

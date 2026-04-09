@@ -1,4 +1,5 @@
 from tchat import logger
+from tchat.config import config as _config
 from tchat.message.message import Message
 from tchat.message.types import MessageType
 from tchat.server.state.server_state import ServerState
@@ -12,6 +13,6 @@ class LeaveHandler:
         self._broadcast_leave( state, username )
 
     def _broadcast_leave( self, state: ServerState, username: str ) -> None:
-        leave_msg = Message.make( MessageType.LEAVE, username, "left the chat" )
+        leave_msg = Message.make( MessageType.LEAVE, username, _config.messages.broadcast_left )
         state.broadcast( leave_msg.to_json() )
         logger.server.message( leave_msg )

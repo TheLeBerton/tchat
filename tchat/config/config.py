@@ -48,12 +48,28 @@ class ColorsConfig:
 
 
 @dataclass
+class MessagesConfig:
+    server_restart: str
+    user_joined: str
+    user_left: str
+    username_taken: str
+    server_online: str
+    broadcast_joined: str
+    broadcast_left: str
+    help_text: str
+    online_format: str
+    nobody_online: str
+    connection_closed: str
+
+
+@dataclass
 class Config:
     server: ServerConfig
     client: ClientConfig
     logger: LoggerConfig
     chat: ChatConfig
     colors: ColorsConfig
+    messages: MessagesConfig
 
 
 def _ensure_config() -> None:
@@ -77,6 +93,7 @@ def _load_config() -> Config:
             logger=LoggerConfig( **data[ "logger" ] ),
             chat=ChatConfig( **data[ "chat" ] ),
             colors=ColorsConfig( **data[ "colors" ] ),
+            messages=MessagesConfig( **data[ "messages" ] )
     )
 
 config = _load_config()

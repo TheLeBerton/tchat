@@ -2,9 +2,8 @@ import os
 import signal
 import threading
 
-from prompt_toolkit.patch_stdout import patch_stdout
-
 from tchat import logger
+from tchat.config import config as _config
 from tchat.message.message import Message
 from tchat.message.types import MessageType
 from tchat.client.connection import Connection
@@ -64,6 +63,6 @@ class ReceiveLoop:
                     logger.client.message( msg )
             except ( MessageFramingError, InvalidMessageError ):
                 break
-        logger.client.warning( "\n[ Connection closed ]"  )
+        logger.client.warning( _config.messages.connection_closed )
         self._connection_lost = True
         os.kill( os.getpid(), signal.SIGINT )
