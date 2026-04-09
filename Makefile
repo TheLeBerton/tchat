@@ -47,45 +47,16 @@ publish-shared:
 # ── Check ─────────────────────────────────────────────────────────────────────
 
 check:
-	@python3 - "$(PI)" "$(PIUSER)" <<'EOF'
-import sys, re, json, threading, subprocess, urllib.request
-
-pi, piuser = sys.argv[1], sys.argv[2]
-results = {}
-
-def get_local():
-    content = open("packages/tchat-shared/tchat_shared/version.py").read()
-    results["local"] = re.search(r'"(v[\d.]+)"', content).group(1)
-
-def get_pypi():
-    try:
-        data = json.loads(urllib.request.urlopen("https://pypi.org/pypi/tchat-client/json", timeout=5).read())
-        results["pypi"] = "v" + data["info"]["version"]
-    except Exception:
-        results["pypi"] = "?"
-
-def get_pi():
-    try:
-        out = subprocess.check_output(
-            ["ssh", f"{piuser}@{pi}", "grep -oP '(?<=\")v[^\"]+(?=\")' ~/tchat/packages/tchat-shared/tchat_shared/version.py"],
-            timeout=10, stderr=subprocess.DEVNULL,
-        ).decode().strip()
-        results["pi"] = out or "?"
-    except Exception:
-        results["pi"] = "?"
-
-threads = [threading.Thread(target=f) for f in [get_local, get_pypi, get_pi]]
-for t in threads: t.start()
-for t in threads: t.join()
-
-local, pypi, pi_v = results["local"], results["pypi"], results["pi"]
-ok   = lambda v: "✓" if v == local else "✗"
-print(f"Local  : {local}")
-print(f"PyPI   : {pypi}  {ok(pypi)}")
-print(f"Pi     : {pi_v}  {ok(pi_v)}")
-EOF
+	@python3 scripts/check_versions.py $(PI) $(PIUSER)
 
 # ── Deploy ────────────────────────────────────────────────────────────────────
+
+release:
+	rm -f dist/tchat_client-*
+	uv build packages/tchat-client
+	uv publish dist/tchat_client-*
+	@git push origin main
+	@bash scripts/deploy-pi.sh
 
 deploy:
 	@git push origin main

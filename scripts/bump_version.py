@@ -30,14 +30,12 @@ def main() -> None:
 
     files_to_add = [str(VERSION_FILE)] + [str(p) for p in PYPROJECT_FILES]
     run(["git", "add"] + files_to_add)
-    run(["git", "commit", "--amend", "--no-edit"])
+    run(["git", "commit", "-m", f"chore: bump version to {new_version}"])
     run(["git", "tag", new_version])
+    run(["git", "push", "--follow-tags"])
 
     print(f"Detected bump: {bump_type}")
     print(f"Released {new_version}")
-    print("Now push with:")
-    print("  git push --force")
-    print("  git push --tags")
 
 
 def detect_bump_type() -> str:
