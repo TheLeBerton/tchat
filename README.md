@@ -18,7 +18,13 @@ That's it.
 Open a terminal and run:
 
 ```
-python3 -m pip install https://github.com/TheLeBerton/tchat/archive/refs/heads/main.tar.gz
+curl -sSL https://raw.githubusercontent.com/TheLeBerton/tchat/main/scripts/client-install.sh | bash
+```
+
+Or with pip directly:
+
+```
+pip install tchat-client
 ```
 
 Then launch it:
@@ -40,9 +46,13 @@ The first time it runs, it will create a config file and ask you to set the serv
 ## Update
 
 ```
-python3 -m pip install --upgrade https://github.com/TheLeBerton/tchat/archive/refs/heads/main.tar.gz
-or
-python3 -m pip install --force-reinstall https://github.com/TheLeBerton/tchat/archive/refs/heads/main.tar.gz
+pip install --upgrade tchat-client
+```
+
+Or re-run the install script:
+
+```
+curl -sSL https://raw.githubusercontent.com/TheLeBerton/tchat/main/scripts/client-install.sh | bash
 ```
 
 ---
