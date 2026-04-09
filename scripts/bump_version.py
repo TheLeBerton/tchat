@@ -32,7 +32,7 @@ def main() -> None:
     run(["git", "add"] + files_to_add)
     run(["git", "commit", "-m", f"chore: bump version to {new_version}"])
     run(["git", "tag", new_version])
-    run(["git", "push", "--follow-tags"])
+    run(["git", "push", "--set-upstream", "origin", "main", "--follow-tags"])
 
     print(f"Detected bump: {bump_type}")
     print(f"Released {new_version}")
