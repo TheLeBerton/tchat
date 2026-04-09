@@ -1,0 +1,21 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "tchat-client"
+version = "0.15.3"
+description = "tchat — client"
+license = { text = "MIT" }
+requires-python = ">=3.11"
+authors = [{ name = "leberton" }]
+dependencies = [
+    "typer>=0.24.1",
+    "prompt_toolkit>=3.0.52",
+]
+
+[project.scripts]
+tchat = "tchat_client.runner:run"
+
+[tool.hatch.build.targets.wheel]
+packages = ["tchat_client", "tchat_shared"]
