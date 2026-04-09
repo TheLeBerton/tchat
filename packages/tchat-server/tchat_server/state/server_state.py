@@ -2,68 +2,81 @@ import socket
 import threading
 from datetime import datetime
 
+from tchat_shared import logger
 from tchat_shared.config import config as _config
 from tchat_shared.exceptions import UnknowUserError
 from tchat_shared.message.framing import send_framed
+from tchat_server.account import Account
 
 
 class ServerState:
     def __init__( self ) -> None:
-        self._users: dict[ tuple, str ] = {}
-        self._connections: dict[ tuple, socket.socket ] = {}
+        self._accounts: list[ Account ] = []
         self._lock = threading.Lock()
         self._history: list[ str ] = []
         self._first_join_after_restart: bool = True
         self._start_time: datetime = datetime.now()
         self._message_count: int = 0
 
+    def _find( self, address: tuple ) -> Account | None:
+        for account in self._accounts:
+            if account.address == address:
+                return account
+        return None
 
     def add_connection( self, address: tuple, conn: socket.socket ) -> None:
         with self._lock:
-            self._connections[ address ] = conn
+            self._accounts.append( Account( address, conn ) )
 
     def add_user( self, address: tuple, username: str ) -> None:
         with self._lock:
-            self._users[ address ] = username
+            account = self._find( address )
+            if account:
+                account.username = username
 
     def remove_user( self, address: tuple ) -> str | None:
         with self._lock:
-            self._connections.pop( address, None )
-            return self._users.pop( address, None )
+            account = self._find( address )
+            if account:
+                self._accounts.remove( account )
+                return account.username or None
+            return None 
 
     def is_registered( self, address: tuple ) -> bool:
         with self._lock:
-            return address in self._users
+            account = self._find( address )
+            return bool( account and account.username.strip() )
 
     def get_username( self, address: tuple ) -> str | None:
         with self._lock:
-            return self._users.get( address )
+            account = self._find( address )
+            if account:
+                return account.username
+            return None
 
     def get_all_usernames( self ) -> list[ str ]:
         with self._lock:
-            users = []
-            for user in self._users.values():
-                if user.strip():
-                    users.append( user )
-            return users
+            usernames = []
+            for account in self._accounts:
+                if account.username.strip():
+                    usernames.append( account.username )
+            return usernames
 
     def broadcast( self, payload: str, exclude: tuple | None = None ) -> None:
         with self._lock:
-            targets = list( self._connections.items() )
-        for address, conn in targets:
-            if address == exclude:
-                continue
+            targets = [ a for a in self._accounts if a.address != exclude ]
+        for account in targets:
             try:
-                send_framed( conn, payload )
+                send_framed( account.connection, payload )
             except OSError:
-                pass
+                logger.server.error( f"Error broadcasting payload to account. address={ account.address } payload={ payload }" )
 
     def send_to( self, address: tuple, payload: str ) -> None:
         with self._lock:
-            conn = self._connections.get( address )
-        if conn is None:
+            user = self._find( address )
+        if user is None or user.connection is None:
             raise UnknowUserError( f"No connection for { address }" )
-        send_framed( conn, payload )
+        send_framed( user.connection, payload )
 
     def add_to_history( self, payload: str ) -> None:
         with self._lock:
@@ -92,14 +105,15 @@ class ServerState:
 
     def is_username_taken( self, username: str ) -> bool:
         with self._lock:
-            return username in self._users.values()
+            return any( a.username == username for a in self._accounts )
 
     def kick( self, address: tuple ) -> None:
         with self._lock:
-            conn = self._connections.pop( address, None )
-            self._users.pop( address, None)
-        if conn:
-            conn.close()
+            account = self._find( address )
+            if account:
+                self._accounts.remove( account )
+        if account:
+            account.connection.close()
 
     def check_and_clear_restart_flag( self ) -> bool:
         with self._lock:
