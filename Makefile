@@ -23,42 +23,30 @@ test-cli:
 	@rm -f $(HOME)/.tchat_username
 	@uv run tchat --host 127.0.0.1
 
+
 # ── Release ───────────────────────────────────────────────────────────────────
+
 
 version:
 	./scripts/bump_version.py
-
-build-client:
-	uv build packages/tchat-client
-
-build-shared:
-	uv build packages/tchat-shared
 
 publish-client:
 	rm -f dist/tchat_client-*
 	uv build packages/tchat-client
 	uv publish dist/tchat_client-*
 
-publish-shared:
-	rm -f dist/tchat_shared-*
-	uv build packages/tchat-shared
-	uv publish dist/tchat_shared-*
 
 # ── Check ─────────────────────────────────────────────────────────────────────
+
 
 check:
 	@python3 scripts/check_versions.py $(PI) $(PIUSER)
 
+
 # ── Deploy ────────────────────────────────────────────────────────────────────
 
-release:
-	rm -f dist/tchat_client-*
-	uv build packages/tchat-client
-	uv publish dist/tchat_client-*
-	@git push origin main
-	@bash scripts/deploy-pi.sh
 
-deploy:
+release: publish-client
 	@git push origin main
 	@bash scripts/deploy-pi.sh
 
