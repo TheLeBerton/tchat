@@ -7,5 +7,5 @@ set -e
 source .env
 
 echo "Deploying to Pi..."
-ssh ${PIUSER}@${PI} "cd tchat && git fetch origin && git reset --hard origin/main && uv sync && sudo systemctl restart tchat"
+ssh ${PIUSER}@${PI} "cd tchat && git fetch origin && git reset --hard origin/main && which uv || curl -LsSf https://astral.sh/uv/install.sh | sh && uv sync && sudo systemctl restart tchat"
 echo "Done."
