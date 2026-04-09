@@ -1,7 +1,7 @@
 import typer
 
-from tchat.server.server import ChatServer
-from tchat.client.runner import run as client_run
+from tchat_server.server import ChatServer
+from tchat_client.runner import run as client_run
 
 app: typer.Typer = typer.Typer()
 

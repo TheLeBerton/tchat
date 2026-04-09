@@ -7,5 +7,5 @@ set -e
 source .env
 
 echo "Deploying to Pi..."
-ssh ${PIUSER}@${PI} "cd tchat && git pull origin main && sudo systemctl restart tchat"
+ssh ${PIUSER}@${PI} "cd tchat && git pull origin main && uv sync && sudo systemctl restart tchat"
 echo "Done."
