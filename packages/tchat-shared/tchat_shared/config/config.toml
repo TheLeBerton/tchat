@@ -39,3 +39,17 @@ help_text = "\n/whooline - who is online\n/status - server status\n/help - list 
 online_format = "Online: {}"
 nobody_online = "nobody"
 connection_closed = "[ Connection closed ]"
+welcome_text = """
+[BOOT] Initializing client...
+[OK]   Connection established
+[AUTH] User authenticated: {}
+
+> Welcome to the system
+
+Available commands:
+ - /whoonline
+ - /status
+ - /help
+ - /quit
+
+root@server:~$"""

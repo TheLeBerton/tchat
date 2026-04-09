@@ -25,6 +25,7 @@ class JoinHandler:
         state.add_user( address, msg.sender )
         self._broadcast_join_message( state, msg, address )
         self._send_history_to_user( state, address )
+        self._send_welcome_to_user( state, address, msg.sender )
 
     def _broadcast_join_message( self, state: ServerState, msg: Message, address: tuple ) -> None:
         broadcast_msg = Message.make( MessageType.JOIN, msg.sender, _config.messages.broadcast_joined )
@@ -34,6 +35,11 @@ class JoinHandler:
     def _send_history_to_user( self, state: ServerState, address: tuple ) -> None:
         for payload in state.get_history():
             state.send_to( address, payload )
+
+    def _send_welcome_to_user( self, state: ServerState, address: tuple, username: str ) -> None:
+        text = _config.messages.welcome_text.format( username )
+        welcome_msg = Message.make( MessageType.COMMAND, "server", text )
+        state.send_to( address, welcome_msg.to_json() )
 
     def _handle_server_restart( self, state: ServerState ) -> None:
         if state.check_and_clear_restart_flag():
