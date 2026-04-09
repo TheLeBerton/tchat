@@ -1,5 +1,6 @@
 compile_commands.json
 __pycache__
+venv/
 ~/.config/tchat/config.toml
 .gitignore
 .env

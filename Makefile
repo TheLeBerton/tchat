@@ -1,4 +1,5 @@
 -include .env
+export PYTHON_KEYRING_BACKEND
 
 PYTHON = venv/bin/python3
 
@@ -43,4 +44,4 @@ version:
 	./scripts/bump_version.py
 
 log:
-	@cat $(HOME)/.local/share/tchat/server.log
+	@ssh admin@ftpi.local "cat /home/admin/.local/share/tchat/server.log | tail -20"

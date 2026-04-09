@@ -4,9 +4,14 @@ build-backend = "hatchling.build"
 
 [project]
 name = "tchat"
-version = "0.8.0"
+version = "0.12.0"
 description = "tchat — server and client"
+reade = "README.md"
+license = { text = "MIT" }
 requires-python = ">=3.11"
+authors = [
+	{ name = "leberton" }
+]
 dependencies = [
     "typer>=0.24.1",
     "prompt_toolkit>=3.0.52",

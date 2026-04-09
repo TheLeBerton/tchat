@@ -6,7 +6,7 @@
 set -e
 
 DIST_DIR="dist/tchat-client"
-VERSION=$(grep '^version' pyproject.toml | head -1 | sed 's/.*= "\(.*\)"/\1/')
+VERSION=$(grep '^VERSION' tchat/version.py | sed 's/.*"v\(.*\)"/\1/')
 
 echo "=== Sync client package (v$VERSION) ==="
 
