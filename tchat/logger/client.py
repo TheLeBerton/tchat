@@ -40,3 +40,6 @@ def banner() -> None:
 
 """
     print( f"{ Colors.BLUE.value }{ chat }{ Colors.RESET.value }" )
+
+def remove_line() -> None:
+    print( "\033[1A\033[2K", end="", flush=True )

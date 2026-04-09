@@ -7,6 +7,8 @@ from prompt_toolkit.patch_stdout import patch_stdout
 from prompt_toolkit.history import FileHistory
 from prompt_toolkit.completion import Completer, Completion
 
+
+from tchat import logger
 from tchat.message.message import Message
 from tchat.message.types import MessageType
 from tchat.client.connection import Connection
@@ -117,5 +119,8 @@ class InputLoop:
                 elif text.startswith( "/" ):
                     self._connection.send( Message.make( MessageType.COMMAND, self._username, text[ 1: ] ) )
                 else:
-                    self._connection.send( Message.make( MessageType.CHAT, self._username, text ) )
+                    msg = Message.make( MessageType.CHAT, self._username, text )
+                    self._connection.send( msg )
+                    logger.client.remove_line()
+                    logger.client.message( msg )
         return True
