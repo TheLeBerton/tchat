@@ -17,6 +17,7 @@ class ServerState:
         self._first_join_after_restart: bool = True
         self._start_time: datetime = datetime.now()
         self._message_count: int = 0
+        self._banned: set[ str ] = set()
 
     def _find( self, address: tuple ) -> Account | None:
         for account in self._accounts:
@@ -141,3 +142,11 @@ class ServerState:
                 if account.username == username:
                     return account
         return None
+
+    def ban( self, address: tuple ) -> None:
+        with self._lock:
+            self._banned.add( address[ 0 ] )
+
+    def is_banned( self, address: tuple ) -> bool:
+        with self._lock:
+            return address[ 0 ] in self._banned

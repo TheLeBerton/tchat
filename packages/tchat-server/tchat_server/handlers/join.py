@@ -13,6 +13,11 @@ class JoinHandler:
         self._handle_server_restart( state )
 
     def _validate_username( self, address: tuple, msg: Message, state: ServerState ) -> None:
+        if state.is_banned( address ):
+            msg = Message.make( MessageType.KICK, "server", "You are banned from this server." )
+            state.send_to( address, msg.to_json() )
+            state.kick( address )
+            raise JoinError( "banned username" )
         if not msg.sender.strip():
             raise JoinError( "empty username" )
         if state.is_username_taken( msg.sender ):

@@ -43,6 +43,7 @@ class ReceiveLoop:
         self._connection = connection
         self._connection_lost = False
         self.typing_tracker = TypingTracker()
+        self.was_kicked: bool = False
 
     @property
     def connection_lost( self ) -> bool:
@@ -59,6 +60,9 @@ class ReceiveLoop:
                 msg = Message.from_json( raw )
                 if msg.type == MessageType.TYPING:
                     self.typing_tracker.set_typing( msg.sender, msg.content )
+                elif msg.type == MessageType.KICK:
+                    self.was_kicked = True
+                    break
                 else:
                     logger.client.message( msg )
             except ( MessageFramingError, InvalidMessageError ):

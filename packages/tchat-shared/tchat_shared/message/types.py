@@ -8,3 +8,4 @@ class MessageType( Enum ):
     LEAVE = "leave"
     VERSION = "version"
     TYPING = "typing"
+    KICK = "kick"

@@ -33,6 +33,8 @@ def run( host: str | None = None ) -> None:
         receiver = ReceiveLoop( conn )
         receiver.start()
         should_reconnect = InputLoop( conn, username ).run( receiver )
+        if receiver.was_kicked:
+            return
         conn.close()
         if should_reconnect:
             logger.client.info( "Connection lost. Reconnecting in 5s..." )

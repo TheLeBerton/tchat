@@ -24,6 +24,10 @@ test-cli:
 	@uv run tchat --host 127.0.0.1
 
 
+restart-serv:
+	@ssh admin@ftpi.local "sudo systemctl restart tchat"
+
+
 # ── Release ───────────────────────────────────────────────────────────────────
 
 
