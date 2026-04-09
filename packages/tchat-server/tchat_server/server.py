@@ -36,7 +36,7 @@ class ChatServer:
                 conn, address = self._socket.accept()
             except OSError:
                 break
-            self._state.add_connection( address, conn )
+            self._state.accounts.add_connection( address, conn )
             logger.server.connected( address )
             session = ClientSession( conn, address, self._state, self._registry )
             thread = threading.Thread( target=session.run, daemon=True )

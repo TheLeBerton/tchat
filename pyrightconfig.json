@@ -1,0 +1,7 @@
+{
+  "extraPaths": [
+    "packages/tchat-shared",
+    "packages/tchat-server",
+    "packages/tchat-client"
+  ]
+}

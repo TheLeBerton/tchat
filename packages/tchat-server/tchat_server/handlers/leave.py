@@ -7,12 +7,12 @@ from tchat_server.state.server_state import ServerState
 
 class LeaveHandler:
     def handle( self, address: tuple, msg: Message, state: ServerState ) -> None:
-        username = state.remove_user( address )
+        username = state.accounts.remove_user( address )
         if username is None:
             return
         self._broadcast_leave( state, username )
 
     def _broadcast_leave( self, state: ServerState, username: str ) -> None:
         leave_msg = Message.make( MessageType.LEAVE, username, _config.messages.broadcast_left )
-        state.broadcast( leave_msg.to_json() )
+        state.broadcaster.cast( leave_msg.to_json() )
         logger.server.message( leave_msg )

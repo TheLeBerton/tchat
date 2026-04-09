@@ -25,14 +25,14 @@ class StatusCommand:
         data = self._get_data( state )
         lines = "\n".join( self._get_lines( data ) )
         msg = Message.make( MessageType.COMMAND, "server", lines )
-        state.send_to( address, msg.to_json() )
+        state.broadcaster.send_to( address, msg.to_json() )
 
     def _get_data( self, state: ServerState ) -> StatusData:
         data = StatusData()
-        data.started = state.get_start_time().strftime( "%d %b %Y, %H:%M:%S" )
-        data.uptime = state.get_uptime()
-        data.users = state.get_all_usernames()
-        data.total_messages = state.get_message_count()
+        data.started = state.server.get_start_time().strftime( "%d %b %Y, %H:%M:%S" )
+        data.uptime = state.server.get_uptime()
+        data.users = state.accounts.get_all_usernames()
+        data.total_messages = state.history.get_message_count()
         data.last_restart = "N/A"
         self._try_get_last_restart( data )
         return data

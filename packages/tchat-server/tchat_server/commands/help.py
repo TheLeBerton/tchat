@@ -8,4 +8,4 @@ class HelpCommand:
 
     def execute( self, address: tuple, args: str, state: ServerState ) -> None:
         response = Message.make( MessageType.COMMAND, "server", _config.messages.help_text )
-        state.send_to( address, response.to_json() )
+        state.broadcaster.send_to( address, response.to_json() )
