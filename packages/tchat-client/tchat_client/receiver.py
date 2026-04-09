@@ -62,11 +62,13 @@ class ReceiveLoop:
                     self.typing_tracker.set_typing( msg.sender, msg.content )
                 elif msg.type == MessageType.KICK:
                     self.was_kicked = True
+                    logger.client.warning( msg.content )
                     break
                 else:
                     logger.client.message( msg )
             except ( MessageFramingError, InvalidMessageError ):
                 break
-        logger.client.warning( _config.messages.connection_closed )
+        if not self.was_kicked:
+            logger.client.warning( _config.messages.connection_closed )
         self._connection_lost = True
         os.kill( os.getpid(), signal.SIGINT )
