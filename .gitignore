@@ -8,3 +8,5 @@ dist/
 *.egg-info/
 ONBOARDING.md
 .pypi_token
+.claude/
+CLAUDE.md
