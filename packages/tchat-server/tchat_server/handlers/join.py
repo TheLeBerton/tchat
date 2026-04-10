@@ -50,7 +50,11 @@ class JoinHandler:
             state.broadcaster.send_to( address, payload )
 
     def _send_welcome_to_user( self, state: ServerState, address: tuple, username: str ) -> None:
-        text = _config.messages.welcome_text.format( username )
+        try:
+            text = _config.messages.welcome_text.format( username )
+        except ( KeyError, IndexError ) as e:
+            logger.server.error( f"Invalid welcome_text template in JoinHandler._send_welcome_to_user. { e }" )
+            text = "Hi, welcome to the tchat server."
         welcome_msg = Message.make( MessageType.COMMAND, "server", text )
         state.broadcaster.send_to( address, welcome_msg.to_json() )
 
