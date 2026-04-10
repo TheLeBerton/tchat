@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "tchat-shared"
-version = "0.18.7"
+version = "0.18.8"
 description = "tchat — shared protocol, config, logger"
 license = { text = "MIT" }
 requires-python = ">=3.11"
