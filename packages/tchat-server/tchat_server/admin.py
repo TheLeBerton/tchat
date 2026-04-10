@@ -4,13 +4,13 @@ import threading
 import time
 import signal as _signal
 from datetime import datetime
-from pathlib import Path
 
 from tchat_shared import logger
 from tchat_shared.config import config as _config
 from tchat_shared.message.message import Message
 from tchat_shared.message.types import MessageType
 from tchat_server.state.server_state import ServerState
+from tchat_server.commands.status import _STATUS_FILE
 
 
 class AdminConsole:
@@ -47,8 +47,7 @@ class AdminConsole:
             logger.server.error( f"Unknown command: { cmd }" )
 
     def _restart( self, delay: int ) -> None:
-        status_file = Path( __file__ ).parents[ 3 ] / "server.status.json"
-        status_file.write_text( json.dumps( { "last_restart": datetime.now().isoformat() } ) )
+        _STATUS_FILE.write_text( json.dumps( { "last_restart": datetime.now().isoformat() } ) )
         msg = Message.make( MessageType.COMMAND, "server", _config.messages.server_restart.format( delay ) )
         self._state.broadcaster.cast( msg.to_json() )
         logger.server.info( f"Restarting in { delay }s..." )
