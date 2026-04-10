@@ -34,6 +34,9 @@ class AdminConsole:
     def _handle( self, cmd: str ) -> None:
         if cmd == "/quit":
             logger.server.info( "Server shutting down..." )
+            msg = Message.make( MessageType.COMMAND, "server", "Server shutting down..." )
+            self._state.broadcaster.cast( msg.to_json() )
+            time.sleep( 1 )
             self._stop()
             os._exit( 0 )
         elif cmd.startswith( "/restart" ):
