@@ -96,7 +96,7 @@ def _load_config() -> Config:
     except OSError as e:
         raise ConfigError( f"Cannot read config: { e }" ) from e
     data[ "messages" ].setdefault( "welcome_text", "Welcome to the system." )
-    admin_data = data.get( "admin", { "usernames": [] } )
+    admin_data = data.get( "admin", { "usernames": [], "ips": [] } )
     return Config(
             server=ServerConfig( **data[ "server" ] ),
             client=ClientConfig( **data[ "client" ] ),
