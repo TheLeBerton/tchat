@@ -3,6 +3,8 @@ from .colors import Colors
 from tchat_shared.config import config as _config
 from tchat_shared.message.message import Message, MessageType, ChatMessage, CommandMessage
 
+from tchat_shared import logger
+
 
 def _tag( label: str, color: str ) -> str:
     return f"{ Colors.WHITE.value }>{ Colors.RESET.value } { color }[{ label:^5}]{ Colors.RESET.value }"
@@ -30,7 +32,7 @@ def message( msg: Message ) -> None:
         _emit( f"{ _tag('MSG', Colors.WHITE.value) } { color }{ Colors.BOLD.value }{ msg.sender }{ Colors.RESET.value }: { msg.text }" )
     elif msg.type == MessageType.COMMAND:
         assert isinstance( msg, CommandMessage )
-        _emit( f"{ _tag('CMD', Colors.BLUE.value) } { msg.text }" )
+        _emit( f"{ _tag( 'SERVER', Colors.MAGENTA.value ) } { msg.text }" )
 
 def banner() -> None:
     chat = r"""
