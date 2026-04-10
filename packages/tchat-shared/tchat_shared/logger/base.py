@@ -11,9 +11,10 @@ _user_colors: dict[ str, Colors ] = {}
 _available_colors = [ Colors.BLUE, Colors.GREEN, Colors.YELLOW, Colors.RED, Colors.WHITE ]
 
 def get_user_color( user: str ) -> Colors:
-    if user not in _user_colors:
-        _user_colors[ user ] = _available_colors[ len( _user_colors ) % len( _available_colors ) ]
-    return _user_colors[ user ]
+    with _lock:
+        if user not in _user_colors:
+            _user_colors[ user ] = _available_colors[ len( _user_colors ) % len( _available_colors ) ]
+        return _user_colors[ user ]
 
 def log( msg: str, server_mode: bool = False ) -> None:
     with _lock:
