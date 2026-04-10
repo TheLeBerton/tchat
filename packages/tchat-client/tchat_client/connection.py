@@ -32,12 +32,14 @@ class Connection:
         """
         Send a message.
         """
-        assert self._socket is not None
+        if self._socket is None:
+            raise RuntimeError( "Not connected" )
         send_framed( self._socket, msg.to_json() )
 
     def receive( self ) -> str:
         """
         Receive a message.
         """
-        assert self._socket is not None
+        if self._socket is None:
+            raise RuntimeError( "Not connected" )
         return receive_framed( self._socket )
