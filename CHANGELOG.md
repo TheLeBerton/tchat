@@ -1,5 +1,15 @@
 # Changelog
 
+## v0.18.6
+- Fix: add missing `ips` default in `AdminConfig` fallback (#32)
+- Fix: improve admin IP rejection message and log attempt (#38, #21)
+- Fix: catch malformed `welcome_text` template instead of crashing (#33)
+- Fix: notify clients before server shutdown on `/quit` (#35)
+- Fix: replace `assert` with `RuntimeError` in `Connection.send` and `receive` (#34)
+- Fix: use shared `STATUS_FILE` path from `status.py` in `admin.py` (#31)
+- Fix: protect `get_user_color` with lock to prevent race condition (#30)
+- Fix: protect `Broadcaster.send_to` account lookup with lock (#29)
+
 ## v0.18.5
 - Refactor: split `ServerState` into components (`AccountManager`, `BanManager`, `HistoryManager`, `ServerInfo`, `Broadcaster`)
 
