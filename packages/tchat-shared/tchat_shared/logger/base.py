@@ -12,6 +12,8 @@ _available_colors = [ Colors.BLUE, Colors.GREEN, Colors.YELLOW, Colors.RED, Colo
 
 def get_user_color( user: str ) -> Colors:
     with _lock:
+        if len( _user_colors ) >= 10:
+            _user_colors.clear()
         if user not in _user_colors:
             _user_colors[ user ] = _available_colors[ len( _user_colors ) % len( _available_colors ) ]
         return _user_colors[ user ]
