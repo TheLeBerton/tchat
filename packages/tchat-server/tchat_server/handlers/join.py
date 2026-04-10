@@ -26,9 +26,10 @@ class JoinHandler:
             state.accounts.kick( address )
             raise JoinError( f"username taken: { msg.sender }" )
         if msg.sender in _config.admin.usernames and address[ 0 ] not in _config.admin.ips:
-            error_msg = Message.make( MessageType.COMMAND, "server", "Username reserved" )
+            error_msg = Message.make( MessageType.COMMAND, "server", "Admin access not configured for your IP" )
             state.broadcaster.send_to( address, error_msg.to_json() )
             state.accounts.kick( address )
+            logger.server.warning( f"( { address[ 0] } ) tried to connect as admin" )
             raise JoinError( f"reserved username: { msg.sender }" )
 
     def _register_user( self, state: ServerState, msg: Message, address: tuple ) -> None:
