@@ -20,7 +20,8 @@ class Broadcaster:
                 logger.server.error( f"Error broadcasting payload to account. address={ account.address } payload={ payload }" )
 
     def send_to( self, address: tuple, payload: str ) -> None:
-        user = next( ( a for a in self.accounts.get_all() if a.address == address ), None )
+        with self._lock:
+            user = next( ( a for a in self.accounts.get_all() if a.address == address ), None )
         if user is None:
             raise UnknowUserError( f"No connection for { address }" )
         send_framed( user.connection, payload )
