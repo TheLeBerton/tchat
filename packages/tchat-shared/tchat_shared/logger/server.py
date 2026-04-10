@@ -3,7 +3,8 @@ from datetime import datetime
 from pathlib import Path
 
 from . import base
-from tchat_shared.message.message import Message, MessageType
+from tchat_shared.message.message import Message, ChatMessage, CommandMessage
+from tchat_shared.message.types import MessageType
 from tchat_shared.config import config as _config
 
 
@@ -30,9 +31,11 @@ def message( msg: Message ) -> None:
     elif msg.type == MessageType.LEAVE:
         _emit( f"{ _prefix('LEAVE') } { msg.sender } left" )
     elif msg.type == MessageType.CHAT:
-        _emit( f"{ _prefix('CHAT') } { msg.sender }: { msg.content }" )
+        assert isinstance( msg, ChatMessage )
+        _emit( f"{ _prefix('CHAT') } { msg.sender }: { msg.text }" )
     elif msg.type == MessageType.COMMAND:
-        _emit( f"{ _prefix('CMD') } { msg.content }" )
+        assert isinstance( msg, CommandMessage )
+        _emit( f"{ _prefix('CMD') } { msg.text }" )
 
 def connected( address: tuple ) -> None:
     _emit( f"{ _prefix('CONN') } { address }" )

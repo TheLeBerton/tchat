@@ -3,8 +3,7 @@ import socket
 
 from tchat_shared import logger
 from tchat_shared.version import VERSION
-from tchat_shared.message.message import Message
-from tchat_shared.message.types import MessageType
+from tchat_shared.message.message import Message, LeaveMessage, VersionMessage
 from tchat_shared.message.framing import receive_framed, send_framed
 from tchat_server.handlers.base import HandlerRegistry
 from tchat_server.state.server_state import ServerState
@@ -19,13 +18,13 @@ class ClientSession:
         self._registry = registry
 
     def run( self ) -> None:
-        version_msg = Message.make( MessageType.VERSION, "server", VERSION )
+        version_msg = VersionMessage.make( "server", VERSION )
         send_framed( self._connection, version_msg.to_json() )
         try:
             for raw in self._messages():
                 self._handle( raw )
         finally:
-            leave_msg = Message.make( MessageType.LEAVE, "", "" )
+            leave_msg = LeaveMessage.make( "", "" )
             self._registry.dispatch( self._address, leave_msg, self._state )
             self._connection.close()
             logger.server.disconnected( self._address )

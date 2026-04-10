@@ -7,8 +7,7 @@ from datetime import datetime
 
 from tchat_shared import logger
 from tchat_shared.config import config as _config
-from tchat_shared.message.message import Message
-from tchat_shared.message.types import MessageType
+from tchat_shared.message.message import CommandMessage
 from tchat_server.state.server_state import ServerState
 from tchat_server.commands.status import _STATUS_FILE
 
@@ -34,7 +33,7 @@ class AdminConsole:
     def _handle( self, cmd: str ) -> None:
         if cmd == "/quit":
             logger.server.info( "Server shutting down..." )
-            msg = Message.make( MessageType.COMMAND, "server", "Server shutting down..." )
+            msg = CommandMessage.make( "server", "Server shutting down..." )
             self._state.broadcaster.cast( msg.to_json() )
             time.sleep( 1 )
             self._stop()
@@ -48,14 +47,14 @@ class AdminConsole:
 
     def _restart( self, delay: int ) -> None:
         _STATUS_FILE.write_text( json.dumps( { "last_restart": datetime.now().isoformat() } ) )
-        msg = Message.make( MessageType.COMMAND, "server", _config.messages.server_restart.format( delay ) )
+        msg = CommandMessage.make( "server", _config.messages.server_restart.format( delay ) )
         self._state.broadcaster.cast( msg.to_json() )
         logger.server.info( f"Restarting in { delay }s..." )
         threading.Thread( target=self._delayed_stop, args=( delay, ), daemon=True ).start()
 
     def _delayed_stop( self, delay: int ) -> None:
         time.sleep( delay )
-        msg = Message.make( MessageType.COMMAND, "server", "Server restarting now." )
+        msg = CommandMessage.make( "server", "Server restarting now." )
         self._state.broadcaster.cast( msg.to_json() )
         logger.server.info( "Restarting now." )
         time.sleep( 1 )

@@ -4,7 +4,7 @@ import threading
 
 from tchat_shared import logger
 from tchat_shared.config import config as _config
-from tchat_shared.message.message import Message
+from tchat_shared.message.message import Message, TypingMessage, KickMessage
 from tchat_shared.message.types import MessageType
 from tchat_client.connection import Connection
 from tchat_shared.exceptions import MessageFramingError, InvalidMessageError
@@ -59,10 +59,12 @@ class ReceiveLoop:
                 raw = self._connection.receive()
                 msg = Message.from_json( raw )
                 if msg.type == MessageType.TYPING:
-                    self.typing_tracker.set_typing( msg.sender, msg.content )
+                    assert isinstance( msg, TypingMessage )
+                    self.typing_tracker.set_typing( msg.sender, msg.status )
                 elif msg.type == MessageType.KICK:
                     self.was_kicked = True
-                    logger.client.warning( msg.content )
+                    assert isinstance( msg, KickMessage )
+                    logger.client.warning( msg.reason )
                     break
                 else:
                     logger.client.message( msg )

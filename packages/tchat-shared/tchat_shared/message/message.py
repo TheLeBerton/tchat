@@ -11,17 +11,7 @@ from tchat_shared.config import config as _config
 class Message:
     type: MessageType
     sender: str
-    content: str
     timestamp: str
-
-    @classmethod
-    def make( cls, type: MessageType, sender: str, content: str ) -> "Message":
-        return cls(
-            type=type,
-            sender=sender,
-            content=content,
-            timestamp=datetime.now().strftime( _config.logger.timestamp_format )
-        )
 
     def to_json( self ) -> str:
         self_dict = asdict( self )
@@ -31,8 +21,91 @@ class Message:
     @classmethod
     def from_json( cls, data: str ) -> "Message":
         try:
-            self_dict = json.loads( data )
-            self_dict[ "type" ] = MessageType( self_dict[ "type" ] )
-            return cls( **self_dict )
+            _dict =  json.loads( data )
+            msg_type = MessageType( _dict[ "type" ] )
+            _dict[ "type" ] = msg_type
+            if msg_type == MessageType.CHAT:
+                return ChatMessage( **_dict )
+            elif msg_type == MessageType.COMMAND:
+                return CommandMessage( **_dict )
+            elif msg_type == MessageType.JOIN:
+                return JoinMessage( **_dict )
+            elif msg_type == MessageType.KICK:
+                return KickMessage( **_dict )
+            elif msg_type == MessageType.LEAVE:
+                return LeaveMessage( **_dict )
+            elif msg_type == MessageType.TYPING:
+                return TypingMessage( **_dict )
+            elif msg_type == MessageType.VERSION:
+                return VersionMessage( **_dict )
+            raise InvalidMessageError( f"Cannot parse message." )
         except ( json.JSONDecodeError, KeyError, ValueError ) as e:
             raise InvalidMessageError( f"Cannot parse message: { e }" ) from e
+
+    @staticmethod
+    def _now() -> str:
+        return datetime.now().strftime( _config.logger.timestamp_format )
+
+
+@dataclass
+class ChatMessage( Message ):
+    text: str
+
+    @classmethod
+    def make( cls, sender: str, text: str ) -> "ChatMessage":
+        return cls( type=MessageType.CHAT, sender=sender, text=text, timestamp=Message._now() )
+
+
+@dataclass
+class CommandMessage( Message ):
+    text: str
+
+    @classmethod
+    def make( cls, sender: str, text: str ) -> "CommandMessage":
+        return cls( type=MessageType.COMMAND, sender=sender, text=text, timestamp=Message._now() )
+
+
+@dataclass
+class JoinMessage( Message ):
+    text: str
+
+    @classmethod
+    def make( cls, sender: str, text: str ) -> "JoinMessage":
+        return cls( type=MessageType.JOIN, sender=sender, text=text, timestamp=Message._now() )
+
+
+@dataclass
+class LeaveMessage( Message ):
+    text: str
+
+    @classmethod
+    def make( cls, sender: str, text: str ) -> "LeaveMessage":
+        return cls( type=MessageType.LEAVE, sender=sender, text=text, timestamp=Message._now() )
+
+
+@dataclass
+class KickMessage( Message ):
+    reason: str
+
+    @classmethod
+    def make( cls, sender: str, reason: str ) -> "KickMessage":
+        return cls( type=MessageType.KICK, sender=sender, reason=reason, timestamp=Message._now() )
+
+
+@dataclass
+class TypingMessage( Message ):
+    status: str
+
+    @classmethod
+    def make( cls, sender: str, status: str ) -> "TypingMessage":
+        return cls( type=MessageType.TYPING, sender=sender, status=status, timestamp=Message._now() )
+
+
+@dataclass
+class VersionMessage( Message ):
+    version: str
+
+    @classmethod
+    def make( cls, sender: str, version: str ) -> "VersionMessage":
+        return cls( type=MessageType.VERSION, sender=sender, version=version, timestamp=Message._now() )
+

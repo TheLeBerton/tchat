@@ -4,8 +4,7 @@ from datetime import datetime
 
 from tchat_shared.config import config as _config
 from tchat_shared.version import VERSION
-from tchat_shared.message.message import Message
-from tchat_shared.message.types import MessageType
+from tchat_shared.message.message import CommandMessage
 from tchat_server.state.server_state import ServerState
 
 
@@ -24,7 +23,7 @@ class StatusCommand:
     def execute( self, address: tuple, args: str, state: ServerState ) -> None:
         data = self._get_data( state )
         lines = "\n".join( self._get_lines( data ) )
-        msg = Message.make( MessageType.COMMAND, "server", lines )
+        msg = CommandMessage.make( "server", lines )
         state.broadcaster.send_to( address, msg.to_json() )
 
     def _get_data( self, state: ServerState ) -> StatusData:

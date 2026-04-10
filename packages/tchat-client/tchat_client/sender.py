@@ -9,8 +9,7 @@ from prompt_toolkit.completion import Completer, Completion
 
 
 from tchat_shared import logger
-from tchat_shared.message.message import Message
-from tchat_shared.message.types import MessageType
+from tchat_shared.message.message import ChatMessage, CommandMessage, TypingMessage
 from tchat_client.connection import Connection
 from tchat_client.receiver import ReceiveLoop
 
@@ -72,7 +71,7 @@ class TypingNotifier:
 
     def _send( self, state: str ) -> None:
         try:
-            self._connection.send( Message.make( MessageType.TYPING, self._username, state ) )
+            self._connection.send( TypingMessage.make( self._username, state ) )
         except OSError:
             pass
 
@@ -119,9 +118,9 @@ class InputLoop:
                 if text == "/quit":
                     return False
                 elif text.startswith( "/" ):
-                    self._connection.send( Message.make( MessageType.COMMAND, self._username, text[ 1: ] ) )
+                    self._connection.send( CommandMessage.make( self._username, text[ 1: ] ) )
                 else:
-                    msg = Message.make( MessageType.CHAT, self._username, text )
+                    msg = ChatMessage.make( self._username, text )
                     self._connection.send( msg )
                     logger.client.remove_line()
                     logger.client.message( msg )

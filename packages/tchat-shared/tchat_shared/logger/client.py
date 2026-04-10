@@ -1,7 +1,7 @@
 from . import base
 from .colors import Colors
 from tchat_shared.config import config as _config
-from tchat_shared.message.message import Message, MessageType
+from tchat_shared.message.message import Message, MessageType, ChatMessage, CommandMessage
 
 
 def _tag( label: str, color: str ) -> str:
@@ -26,9 +26,11 @@ def message( msg: Message ) -> None:
         _emit( f"{ _tag('LEAVE', Colors.YELLOW.value) } { msg.sender } { _config.messages.user_left }" )
     elif msg.type == MessageType.CHAT:
         color = base.get_user_color( msg.sender ).value
-        _emit( f"{ _tag('MSG', Colors.WHITE.value) } { color }{ Colors.BOLD.value }{ msg.sender }{ Colors.RESET.value }: { msg.content }" )
+        assert isinstance( msg, ChatMessage )
+        _emit( f"{ _tag('MSG', Colors.WHITE.value) } { color }{ Colors.BOLD.value }{ msg.sender }{ Colors.RESET.value }: { msg.text }" )
     elif msg.type == MessageType.COMMAND:
-        _emit( f"{ _tag('CMD', Colors.BLUE.value) } { msg.content }" )
+        assert isinstance( msg, CommandMessage )
+        _emit( f"{ _tag('CMD', Colors.BLUE.value) } { msg.text }" )
 
 def banner() -> None:
     chat = r"""

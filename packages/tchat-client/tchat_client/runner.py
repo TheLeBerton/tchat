@@ -4,8 +4,7 @@ from tchat_shared import logger
 from tchat_client.updater import check_and_update
 from tchat_shared.config import config as _config
 from tchat_shared.version import VERSION
-from tchat_shared.message.message import Message
-from tchat_shared.message.types import MessageType
+from tchat_shared.message.message import Message, VersionMessage, JoinMessage
 from tchat_client.connection import Connection
 from tchat_client.identity import load_username, prompt_username
 from tchat_client.receiver import ReceiveLoop
@@ -25,11 +24,12 @@ def run( host: str | None = None ) -> None:
             time.sleep( 5 )
             continue
         version_msg = Message.from_json( conn.receive() )
-        if version_msg.content != VERSION:
-            logger.client.info( f"Version mismatch — serveur: { version_msg.content }, client: { VERSION }. Telecharge la derniere version." )
+        assert isinstance( version_msg, VersionMessage )
+        if version_msg.version != VERSION:
+            logger.client.info( f"Version mismatch — serveur: { version_msg.version }, client: { VERSION }. Telecharge la derniere version." )
             conn.close()
             return
-        conn.send( Message.make( MessageType.JOIN, username, "" ) )
+        conn.send( JoinMessage.make( username, "" ) )
         receiver = ReceiveLoop( conn )
         receiver.start()
         should_reconnect = InputLoop( conn, username ).run( receiver )
