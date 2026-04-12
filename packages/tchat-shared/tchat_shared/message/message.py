@@ -1,3 +1,4 @@
+"""Defines message classes and JSON serialization for the tchat protocoll."""
 from dataclasses import dataclass, asdict
 from datetime import datetime
 import json
