@@ -1,3 +1,4 @@
+"""Username persistence and prompt logic for the tchat client."""
 import re
 from pathlib import Path
 
@@ -17,14 +18,17 @@ def _validate( name: str ) -> str | None:
 
 
 def load_username() -> str | None:
+    """Return the saved username from disk, or None if none exists."""
     if USERNAME_FILE.exists():
         return USERNAME_FILE.read_text().strip()
     return None
 
 def save_username( name: str ) -> None:
+    """Persist the username to disk for future sessions."""
     USERNAME_FILE.write_text( name )
 
 def prompt_username( saved: str | None = None ) -> str:
+    """Prompt the user to enter or confirm a username, validate it, and save it."""
     if saved:
         print( f"Saved username: \033[1m{ saved }\033[0m — press Enter to use it, or type a new one." )
     while True:

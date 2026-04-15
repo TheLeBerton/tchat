@@ -1,3 +1,4 @@
+"""State component re-exports for convenient importing."""
 from tchat_server.state.components.ban_manager import BanManager
 from tchat_server.state.components.history_manager import HistoryManager
 from tchat_server.state.components.server_info import ServerInfo

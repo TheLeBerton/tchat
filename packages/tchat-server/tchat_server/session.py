@@ -1,3 +1,4 @@
+"""Manages the lifecycle of a single client connection."""
 from collections.abc import Iterator
 import socket
 
@@ -11,13 +12,17 @@ from tchat_shared.exceptions import MessageFramingError, InvalidMessageError, Co
 
 
 class ClientSession:
+    """Handles the full message loop for one connected client."""
+
     def __init__ ( self, connection: socket.socket, address: tuple, state: ServerState, registry: HandlerRegistry ) -> None:
+        """Store the connection, address, shared state, and handler registry."""
         self._connection = connection
         self._address = address
         self._state = state
         self._registry = registry
 
     def run( self ) -> None:
+        """Send the version handshake, process incoming messages, then clean up."""
         version_msg = VersionMessage.make( "server", VERSION )
         send_framed( self._connection, version_msg.to_json() )
         try:
@@ -30,6 +35,7 @@ class ClientSession:
             logger.server.disconnected( self._address )
 
     def _messages( self ) -> Iterator[ str ]:
+        """Yield raw framed strings from the socket until the connection closes."""
         while True:
             try:
                 yield receive_framed( self._connection )
@@ -37,6 +43,7 @@ class ClientSession:
                 break
 
     def _handle( self, raw: str ) -> None:
+        """Parse a raw JSON string and dispatch it to the appropriate handler."""
         try:
             msg = Message.from_json( raw )
             self._registry.dispatch( self._address, msg, self._state )

@@ -1,3 +1,4 @@
+"""TCP server that accepts client connections and dispatches them to sessions."""
 import socket
 import threading
 
@@ -10,12 +11,16 @@ from tchat_server.admin import AdminConsole
 
 
 class ChatServer:
+    """Binds the TCP socket, accepts connections, and spawns per-client sessions."""
+
     def __init__( self ) -> None:
+        """Initialise server state, handler registry, and socket placeholder."""
         self._state = ServerState()
         self._registry = build_registry()
         self._socket: socket.socket | None = None
 
     def start( self ) -> None:
+        """Bind the socket, start the admin console, and enter the accept loop."""
         self._socket = socket.socket( socket.AF_INET, socket.SOCK_STREAM )
         self._socket.setsockopt( socket.SOL_SOCKET, socket.SO_REUSEADDR, 1 )
         self._socket.bind( ( config.server.ip, config.server.port ) )
@@ -25,10 +30,12 @@ class ChatServer:
         self._accept_loop()
 
     def stop( self ) -> None:
+        """Close the server socket, causing the accept loop to exit."""
         if self._socket:
             self._socket.close()
 
     def _accept_loop( self ) -> None:
+        """Block and accept incoming connections, spawning a thread per client."""
         while True:
             try:
                 if not self._socket:
@@ -44,6 +51,7 @@ class ChatServer:
 
 
 def main() -> None:
+    """Start the server; used as a package entry point."""
     try:
         ChatServer().start()
     except Exception as e:

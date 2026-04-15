@@ -1,3 +1,4 @@
+"""Shared logging primitives: color assignment and thread-safe print."""
 import threading
 from datetime import datetime
 
@@ -11,6 +12,7 @@ _user_colors: dict[ str, Colors ] = {}
 _available_colors = [ Colors.BLUE, Colors.GREEN, Colors.YELLOW, Colors.RED, Colors.WHITE ]
 
 def get_user_color( user: str ) -> Colors:
+    """Return a stable ANSI color for a username, cycling through the available palette."""
     with _lock:
         if len( _user_colors ) >= 10:
             _user_colors.clear()
@@ -19,6 +21,7 @@ def get_user_color( user: str ) -> Colors:
         return _user_colors[ user ]
 
 def log( msg: str, server_mode: bool = False ) -> None:
+    """Print msg, using typewriter effect in client mode when configured."""
     with _lock:
         if not server_mode and _config.logger.typewriter:
             typewriter.write( msg, _config.logger.typewriter_delay )

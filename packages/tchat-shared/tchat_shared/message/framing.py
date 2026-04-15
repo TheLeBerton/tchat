@@ -1,3 +1,4 @@
+"""Length-prefixed framing for sending and receiving messages over a TCP socket."""
 import struct
 import socket
 

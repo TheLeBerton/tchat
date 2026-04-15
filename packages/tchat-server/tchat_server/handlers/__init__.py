@@ -1,3 +1,4 @@
+"""Assembles the HandlerRegistry and CommandRegistry with all registered handlers."""
 from tchat_shared.message.types import MessageType
 from tchat_server.state.server_state import ServerState
 from tchat_server.handlers.base import HandlerRegistry
@@ -14,6 +15,7 @@ from tchat_server.handlers.typing import TypingHandler
 
 
 def build_registry() -> HandlerRegistry:
+    """Build and return a HandlerRegistry pre-loaded with all message handlers and commands."""
     commands = CommandRegistry()
     commands.register( "whoonline", WhoOnlineCommand() )
     commands.register( "help", HelpCommand() )

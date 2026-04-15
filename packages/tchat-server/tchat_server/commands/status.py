@@ -1,3 +1,4 @@
+"""The /status command — reports server uptime, connected users, and message count."""
 import json
 from pathlib import Path
 from datetime import datetime
@@ -12,6 +13,8 @@ _STATUS_FILE = Path( __file__ ).parents[ 3 ] / "server.status.json"
 
 
 class StatusData:
+    """Plain data bag used to pass status fields between helper methods."""
+
     started: str
     uptime: str
     last_restart: str
@@ -20,13 +23,17 @@ class StatusData:
 
 
 class StatusCommand:
+    """Collects and formats server status, then replies to the requesting user."""
+
     def execute( self, address: tuple, args: str, state: ServerState ) -> None:
+        """Gather status data and send the formatted report to the user."""
         data = self._get_data( state )
         lines = "\n".join( self._get_lines( data ) )
         msg = CommandMessage.make( "server", lines )
         state.broadcaster.send_to( address, msg.to_json() )
 
     def _get_data( self, state: ServerState ) -> StatusData:
+        """Build a StatusData object from live server state and the status file."""
         data = StatusData()
         data.started = state.server.get_start_time().strftime( "%d %b %Y, %H:%M:%S" )
         data.uptime = state.server.get_uptime()
@@ -37,6 +44,7 @@ class StatusCommand:
         return data
 
     def _try_get_last_restart( self, data: StatusData ) -> None:
+        """Read the last restart timestamp from the status file into data, if available."""
         if _STATUS_FILE.exists():
             try:
                 status_data = json.loads( _STATUS_FILE.read_text() )
@@ -45,6 +53,7 @@ class StatusCommand:
                 pass
 
     def _get_lines( self, data: StatusData ) -> list[ str ]:
+        """Format the StatusData fields into a list of display lines."""
         lines = []
         lines.append( "[ SERVER STATUS ]" )
         lines.append( f"Version         : { VERSION }" )

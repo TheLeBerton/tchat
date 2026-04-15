@@ -1,3 +1,4 @@
+"""Admin console that handles operator commands and restart signals."""
 import os
 import json
 import threading
@@ -13,16 +14,21 @@ from tchat_server.commands.status import _STATUS_FILE
 
 
 class AdminConsole:
+    """Reads operator commands from stdin and handles server lifecycle actions."""
+
     def __init__( self, state: ServerState, stop_callback ) -> None:
+        """Set up the console with a reference to server state and a stop callback."""
         self._state = state
         self._stop = stop_callback
         _signal.signal( _signal.SIGUSR1, self._on_signal_restart )
 
     def start( self ) -> None:
+        """Launch the stdin-reading loop in a background daemon thread."""
         thread = threading.Thread( target=self._loop, daemon=True )
         thread.start()
 
     def _loop( self ) -> None:
+        """Block on stdin and dispatch each line as an admin command."""
         while True:
             try:
                 cmd = input()
@@ -31,6 +37,7 @@ class AdminConsole:
             self._handle( cmd.strip() )
 
     def _handle( self, cmd: str ) -> None:
+        """Route an admin command string to the appropriate action."""
         if cmd == "/quit":
             logger.server.info( "Server shutting down..." )
             msg = CommandMessage.make( "server", "Server shutting down..." )
@@ -46,6 +53,7 @@ class AdminConsole:
             logger.server.error( f"Unknown command: { cmd }" )
 
     def _restart( self, delay: int ) -> None:
+        """Broadcast a restart warning and schedule a stop after delay seconds."""
         _STATUS_FILE.write_text( json.dumps( { "last_restart": datetime.now().isoformat() } ) )
         msg = CommandMessage.make( "server", _config.messages.server_restart.format( delay ) )
         self._state.broadcaster.cast( msg.to_json() )
@@ -53,6 +61,7 @@ class AdminConsole:
         threading.Thread( target=self._delayed_stop, args=( delay, ), daemon=True ).start()
 
     def _delayed_stop( self, delay: int ) -> None:
+        """Wait delay seconds, then broadcast and execute a server stop."""
         time.sleep( delay )
         msg = CommandMessage.make( "server", "Server restarting now." )
         self._state.broadcaster.cast( msg.to_json() )
@@ -62,4 +71,5 @@ class AdminConsole:
         os._exit( 0 )
 
     def _on_signal_restart( self, sig, frame ) -> None:
+        """SIGUSR1 handler — triggers a 10-second restart."""
         self._restart( 10 )

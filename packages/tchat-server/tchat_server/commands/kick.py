@@ -1,9 +1,13 @@
+"""The /kick command — admin-only ban and disconnection of a user."""
 from tchat_shared.message.message import CommandMessage, KickMessage
 from tchat_server.state.server_state import ServerState
 
 
 class KickCommand:
+    """Bans and disconnects a user by username; requires admin privileges."""
+
     def execute( self, address: tuple, args: str, state: ServerState ) -> None:
+        """Validate admin rights and target, then kick and ban the named user."""
         if not state.accounts.is_admin( address ):
             msg = CommandMessage.make( "server", "Unauthorized: admin only." )
             state.broadcaster.send_to( address, msg.to_json() )

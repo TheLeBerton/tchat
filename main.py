@@ -1,3 +1,4 @@
+"""Entry point for the tchat CLI — exposes the `serv` and `cli` commands."""
 import typer
 
 from tchat_server.server import ChatServer
@@ -7,6 +8,7 @@ app: typer.Typer = typer.Typer()
 
 @app.command()
 def serv():
+    """Start the tchat server."""
     try:
         ChatServer().start()
     except Exception as e:
@@ -14,6 +16,7 @@ def serv():
 
 @app.command()
 def cli( host: str = typer.Option( None, "--host", help="Override server IP (e.g. 127.0.0.1 for local testing)" ) ):
+    """Start the tchat client."""
     try:
         client_run( host=host )
     except Exception as e:

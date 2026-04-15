@@ -1,3 +1,4 @@
+"""Auto-updater: checks PyPI for a newer tchat-client version and upgrades if needed."""
 import json
 import os
 import subprocess
@@ -11,6 +12,7 @@ _PYPI_URL = "https://pypi.org/pypi/tchat-client/json"
 
 
 def _fetch_remote_version() -> str | None:
+    """Query PyPI and return the latest tchat-client version string, or None on failure."""
     try:
         with urllib.request.urlopen( _PYPI_URL, timeout=3 ) as resp:
             data = json.loads( resp.read() )
@@ -21,6 +23,7 @@ def _fetch_remote_version() -> str | None:
 
 
 def check_and_update() -> None:
+    """If a newer version exists on PyPI, upgrade the package and re-exec the process."""
     try:
         pkg_version( "tchat-client" )
     except PackageNotFoundError:

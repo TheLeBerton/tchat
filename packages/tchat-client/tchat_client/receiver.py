@@ -1,3 +1,4 @@
+"""Background receive loop and typing-status tracker for the tchat client."""
 import os
 import signal
 import threading
@@ -11,13 +12,17 @@ from tchat_shared.exceptions import MessageFramingError, InvalidMessageError
 
 
 class TypingTracker:
+    """Tracks which remote users are currently typing, with auto-expiry."""
+
     EXPIRY = 2.0
 
     def __init__( self ) -> None:
+        """Initialise the typing-user map and its lock."""
         self._typing: dict[ str, threading.Timer ] = {}
         self._lock = threading.Lock()
 
     def set_typing( self, username: str, state: str ) -> None:
+        """Mark username as typing ('start') or not ('stop'), resetting the expiry timer."""
         with self._lock:
             if username in self._typing:
                 self._typing[ username ].cancel()
@@ -30,16 +35,21 @@ class TypingTracker:
                 self._typing.pop( username, None )
 
     def _expire( self, username: str ) -> None:
+        """Remove username from the typing map after the expiry timeout."""
         with self._lock:
             self._typing.pop( username, None )
 
     def get_typing_users( self ) -> list[ str ]:
+        """Return the list of usernames currently marked as typing."""
         with self._lock:
             return list( self._typing.keys() )
 
 
 class ReceiveLoop:
+    """Reads incoming messages from the server in a background thread."""
+
     def __init__( self, connection: Connection ) -> None:
+        """Initialise with the active connection and reset kick/lost state."""
         self._connection = connection
         self._connection_lost = False
         self.typing_tracker = TypingTracker()
@@ -47,13 +57,16 @@ class ReceiveLoop:
 
     @property
     def connection_lost( self ) -> bool:
+        """True once the receive loop has exited due to a closed or broken connection."""
         return self._connection_lost
 
     def start( self ) -> None:
+        """Launch the receive loop in a background daemon thread."""
         thread = threading.Thread( target=self._loop, daemon=True )
         thread.start()
 
     def _loop( self ) -> None:
+        """Continuously read and dispatch messages until the connection closes."""
         while True:
             try:
                 raw = self._connection.receive()

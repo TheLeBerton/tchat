@@ -1,6 +1,8 @@
+"""ANSI escape codes used for terminal color output."""
 from enum import Enum
 
 class Colors( Enum ):
+    """ANSI color and style codes for terminal formatting."""
     BLUE = "\033[34m"
     GREEN = "\033[32m"
     WHITE = "\033[37m"

@@ -1,3 +1,4 @@
+"""Custom exception hierarchy for the tchat application."""
 class ChatError( Exception ):
     """Base class for all chat application errors."""
 

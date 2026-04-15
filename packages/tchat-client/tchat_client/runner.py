@@ -1,3 +1,4 @@
+"""Entry point for the tchat client — connects, authenticates, and starts the I/O loops."""
 import time
 
 from tchat_shared import logger
@@ -12,6 +13,7 @@ from tchat_client.sender import InputLoop
 
 
 def run( host: str | None = None ) -> None:
+    """Connect to the server, join with a username, and run the send/receive loops."""
     check_and_update()
     logger.client.banner()
     username = prompt_username( load_username() )

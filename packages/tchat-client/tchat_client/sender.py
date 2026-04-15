@@ -1,3 +1,4 @@
+"""Interactive input loop, typing notifications, and command completion for the client."""
 import threading
 import time
 from pathlib import Path
@@ -18,7 +19,10 @@ COMMANDS = [ "/whoonline", "/kick", "/status", "/help", "/quit" ]
 
 
 class CommandCompleter( Completer ):
+    """Tab-completes slash commands in the prompt_toolkit input."""
+
     def get_completions( self, document, complete_event ):
+        """Yield completions for any input that starts with '/'."""
         text = document.text_before_cursor
         if not text.startswith( "/" ):
             return
@@ -28,10 +32,13 @@ class CommandCompleter( Completer ):
 
 
 class TypingNotifier:
+    """Sends throttled typing-start/stop events to the server as the user types."""
+
     THROTTLE = 2.5
     IDLE_TIMEOUT = 4.0
 
     def __init__( self, connection: Connection, username: str ) -> None:
+        """Initialise with the connection, username, and internal timing state."""
         self._connection = connection
         self._username = username
         self._last_sent = 0.0
@@ -40,6 +47,7 @@ class TypingNotifier:
         self._lock = threading.Lock()
 
     def on_text_changed( self, _buffer ) -> None:
+        """Called on every keystroke; sends a throttled typing-start event."""
         now = time.monotonic()
         with self._lock:
             if self._timer:
@@ -53,6 +61,7 @@ class TypingNotifier:
             self._timer.start()
 
     def on_message_sent( self ) -> None:
+        """Cancel the idle timer and send a typing-stop event when a message is submitted."""
         with self._lock:
             if self._timer:
                 self._timer.cancel()
@@ -63,6 +72,7 @@ class TypingNotifier:
                 self._last_sent = 0.0
 
     def _send_stop( self ) -> None:
+        """Idle-timeout callback — send a typing-stop event if still marked as typing."""
         with self._lock:
             if self._is_typing:
                 self._send( "stop" )
@@ -70,6 +80,7 @@ class TypingNotifier:
                 self._last_sent = 0.0
 
     def _send( self, state: str ) -> None:
+        """Send a TypingMessage with the given state ('start' or 'stop'), silencing OS errors."""
         try:
             self._connection.send( TypingMessage.make( self._username, state ) )
         except OSError:
@@ -77,15 +88,20 @@ class TypingNotifier:
 
 
 class InputLoop:
+    """Prompt-toolkit based input loop that reads user input and sends messages."""
+
     def __init__( self, connection: Connection, username: str ) -> None:
+        """Store the connection and username for use during the loop."""
         self._connection = connection
         self._username = username
 
     def run( self, receiver: ReceiveLoop ) -> bool:
+        """Run the prompt loop; return True if the client should reconnect, False to exit."""
         history_file = Path.home() / ".tchat_history"
         notifier = TypingNotifier( self._connection, self._username )
 
         def bottom_toolbar():
+            """Return the toolbar text showing who is currently typing."""
             users = receiver.typing_tracker.get_typing_users()
             if not users:
                 return ""
@@ -104,6 +120,7 @@ class InputLoop:
             return receiver.connection_lost
 
         def pre_run():
+            """Wire the typing notifier to the buffer's on_text_changed event before each prompt."""
             session.app.current_buffer.on_text_changed += notifier.on_text_changed
 
         with patch_stdout( raw=True ):

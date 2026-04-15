@@ -1,3 +1,4 @@
+"""TCP connection wrapper used by the client to communicate with the server."""
 import socket
 
 from tchat_shared.config import config
@@ -11,6 +12,7 @@ class Connection:
     """
 
     def __init__( self, host: str | None = None ) -> None:
+        """Use the configured server IP by default, or override with host."""
         self._host = host or config.client.ip
         self._socket: socket.socket | None = None
 
