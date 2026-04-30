@@ -21,7 +21,6 @@ def get_user_color( user: str ) -> Colors:
         return _user_colors[ user ]
 
 def log( msg: str, server_mode: bool = False ) -> None:
-    """Print msg, using typewriter effect in client mode when configured."""
     with _lock:
         if not server_mode and _config.logger.typewriter:
             typewriter.write( msg, _config.logger.typewriter_delay )

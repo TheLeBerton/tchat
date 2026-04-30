@@ -14,8 +14,7 @@ from tchat_shared.exceptions import MessageFramingError, InvalidMessageError, Co
 class ClientSession:
     """Handles the full message loop for one connected client."""
 
-    def __init__ ( self, connection: socket.socket, address: tuple, state: ServerState, registry: HandlerRegistry ) -> None:
-        """Store the connection, address, shared state, and handler registry."""
+    def __init__ ( self, connection: socket.socket, address: tuple[str, int], state: ServerState, registry: HandlerRegistry ) -> None:
         self._connection = connection
         self._address = address
         self._state = state

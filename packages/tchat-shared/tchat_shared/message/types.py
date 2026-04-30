@@ -6,7 +6,7 @@ from enum import Enum
 class MessageType( Enum ):
     """
     Helps routing the messages on the server side.
-    Helps formating display on client/server side.
+    Helps formatting display on client/server side.
     """
     CHAT = "chat"
     COMMAND = "command"

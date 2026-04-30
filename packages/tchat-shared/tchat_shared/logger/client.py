@@ -4,15 +4,12 @@ from .colors import Colors
 from tchat_shared.config import config as _config
 from tchat_shared.message.message import Message, MessageType, ChatMessage, CommandMessage
 
-from tchat_shared import logger
-
 
 def _tag( label: str, color: str ) -> str:
     """Build a colored tag string like ` > [LABEL]` for the left margin."""
     return f"{ Colors.WHITE.value }>{ Colors.RESET.value } { color }[{ label:^5}]{ Colors.RESET.value }"
 
 def _emit( msg: str ) -> None:
-    """Send a formatted string to the base logger in client mode."""
     base.log( msg, server_mode=False )
 
 def info( msg: str ) -> None:

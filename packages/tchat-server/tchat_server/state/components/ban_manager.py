@@ -10,12 +10,12 @@ class BanManager:
         self._lock = threading.Lock()
         self._banned: set[ str ] = set()
 
-    def ban( self, address: tuple ) -> None:
+    def ban( self, address: tuple[str, int] ) -> None:
         """Add the IP from address to the ban list."""
         with self._lock:
             self._banned.add( address[ 0 ] )
 
-    def is_banned( self, address: tuple ) -> bool:
+    def is_banned( self, address: tuple[str, int] ) -> bool:
         """Return True if the IP from address is banned."""
         with self._lock:
             return address[ 0 ] in self._banned

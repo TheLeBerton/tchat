@@ -9,10 +9,9 @@ class CommandHandler:
     """Dispatches command-type messages to the appropriate Command."""
 
     def __init__( self, commands: CommandRegistry ) -> None:
-        """Store a reference to the command registry."""
         self._commands = commands
 
-    def handle( self, address: tuple, msg: Message, state: ServerState ) -> None:
+    def handle( self, address: tuple[str, int], msg: Message, state: ServerState ) -> None:
         """Extract the command text and dispatch it via the command registry."""
         assert isinstance( msg, CommandMessage )
         self._commands.dispatch( address, msg.text, state )

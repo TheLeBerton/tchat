@@ -14,7 +14,6 @@ class ChatServer:
     """Binds the TCP socket, accepts connections, and spawns per-client sessions."""
 
     def __init__( self ) -> None:
-        """Initialise server state, handler registry, and socket placeholder."""
         self._state = ServerState()
         self._registry = build_registry()
         self._socket: socket.socket | None = None

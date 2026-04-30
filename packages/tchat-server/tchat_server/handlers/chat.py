@@ -9,20 +9,19 @@ from tchat_shared.exceptions import UnknowUserError
 class ChatHandler:
     """Validates and broadcasts chat messages from registered users."""
 
-    def handle( self, address: tuple, msg: ChatMessage, state: ServerState ) -> None:
+    def handle( self, address: tuple[str, int], msg: ChatMessage, state: ServerState ) -> None:
         """Validate the sender is registered, then broadcast the message."""
         username = self._require_username( address, state )
         self._broadcast_chat( address, msg, state, username )
 
-    def _require_username( self, address: tuple, state: ServerState ) -> str:
+    def _require_username( self, address: tuple[str, int], state: ServerState ) -> str:
         """Return the username for address; raises UnknowUserError if not found."""
         username = state.accounts.get_username( address )
         if username is None:
             raise UnknowUserError( f"No user registered for { address }" )
         return username
 
-    def _broadcast_chat( self, address: tuple, msg: ChatMessage, state: ServerState, username: str ) -> None:
-        """Validate content, then broadcast the message and add it to history."""
+    def _broadcast_chat( self, address: tuple[str, int], msg: ChatMessage, state: ServerState, username: str ) -> None:
         if not self._validate_content( address, msg.text, state ):
             return
         chat_msg = ChatMessage.make( username, msg.text )
@@ -30,7 +29,7 @@ class ChatHandler:
         state.history.add_to_history( chat_msg.to_json() )
         logger.server.message( chat_msg )
 
-    def _validate_content( self, address: tuple, content: str , state: ServerState ) -> bool:
+    def _validate_content( self, address: tuple[str, int], content: str , state: ServerState ) -> bool:
         """Return False and notify the sender if content is empty or too long."""
         if not content.strip():
             error_msg = CommandMessage.make( "server", "Messages content cannot be empty" )

@@ -17,7 +17,6 @@ class TypingTracker:
     EXPIRY = 2.0
 
     def __init__( self ) -> None:
-        """Initialise the typing-user map and its lock."""
         self._typing: dict[ str, threading.Timer ] = {}
         self._lock = threading.Lock()
 
@@ -35,7 +34,6 @@ class TypingTracker:
                 self._typing.pop( username, None )
 
     def _expire( self, username: str ) -> None:
-        """Remove username from the typing map after the expiry timeout."""
         with self._lock:
             self._typing.pop( username, None )
 

@@ -16,7 +16,6 @@ class Message:
     timestamp: str
 
     def to_json( self ) -> str:
-        """Serialize the message to a JSON string"""
         self_dict = asdict( self )
         self_dict[ "type" ] = self.type.value
         return json.dumps( self_dict )
@@ -48,7 +47,6 @@ class Message:
 
     @staticmethod
     def _now() -> str:
-        """Return the current time as a formatted string."""
         return datetime.now().strftime( _config.logger.timestamp_format )
 
 
@@ -59,7 +57,6 @@ class ChatMessage( Message ):
 
     @classmethod
     def make( cls, sender: str, text: str ) -> "ChatMessage":
-        """Create a new chat message with the current timestamp."""
         return cls( type=MessageType.CHAT, sender=sender, text=text, timestamp=Message._now() )
 
 
@@ -70,7 +67,6 @@ class CommandMessage( Message ):
 
     @classmethod
     def make( cls, sender: str, text: str ) -> "CommandMessage":
-        """Create a new command message with the current timestamp."""
         return cls( type=MessageType.COMMAND, sender=sender, text=text, timestamp=Message._now() )
 
 
@@ -81,7 +77,6 @@ class JoinMessage( Message ):
 
     @classmethod
     def make( cls, sender: str, text: str ) -> "JoinMessage":
-        """Create a new join message with the current timestamp."""
         return cls( type=MessageType.JOIN, sender=sender, text=text, timestamp=Message._now() )
 
 
@@ -92,7 +87,6 @@ class LeaveMessage( Message ):
 
     @classmethod
     def make( cls, sender: str, text: str ) -> "LeaveMessage":
-        """Create a new leave message with the current timestamp."""
         return cls( type=MessageType.LEAVE, sender=sender, text=text, timestamp=Message._now() )
 
 
@@ -103,7 +97,6 @@ class KickMessage( Message ):
 
     @classmethod
     def make( cls, sender: str, reason: str ) -> "KickMessage":
-        """Create a new kick message with the current timestamp."""
         return cls( type=MessageType.KICK, sender=sender, reason=reason, timestamp=Message._now() )
 
 
@@ -114,7 +107,6 @@ class TypingMessage( Message ):
 
     @classmethod
     def make( cls, sender: str, status: str ) -> "TypingMessage":
-        """Create a new typing message with the current timestamp."""
         return cls( type=MessageType.TYPING, sender=sender, status=status, timestamp=Message._now() )
 
 
@@ -125,6 +117,5 @@ class VersionMessage( Message ):
 
     @classmethod
     def make( cls, sender: str, version: str ) -> "VersionMessage":
-        """Create a new version message with the current timestamp."""
         return cls( type=MessageType.VERSION, sender=sender, version=version, timestamp=Message._now() )
 

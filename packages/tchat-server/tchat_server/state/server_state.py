@@ -6,7 +6,6 @@ class ServerState:
     """Central state passed to every handler — holds accounts, history, bans, and broadcaster."""
 
     def __init__( self ) -> None:
-        """Instantiate and wire all state components."""
         self.ban: BanManager = BanManager()
         self.history: HistoryManager = HistoryManager()
         self.server: ServerInfo = ServerInfo()

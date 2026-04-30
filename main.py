@@ -7,7 +7,7 @@ from tchat_client.runner import run as client_run
 app: typer.Typer = typer.Typer()
 
 @app.command()
-def serv():
+def serv() -> None:
     """Start the tchat server."""
     try:
         ChatServer().start()
@@ -15,7 +15,7 @@ def serv():
         print( f"[ SERVER ERROR ]: { e }" )
 
 @app.command()
-def cli( host: str = typer.Option( None, "--host", help="Override server IP (e.g. 127.0.0.1 for local testing)" ) ):
+def cli( host: str = typer.Option( None, "--host", help="Override server IP (e.g. 127.0.0.1 for local testing)" ) ) -> None:
     """Start the tchat client."""
     try:
         client_run( host=host )

@@ -3,6 +3,7 @@ import json
 import os
 import subprocess
 import sys
+import urllib.error
 import urllib.request
 from importlib.metadata import PackageNotFoundError, version as pkg_version
 
@@ -17,7 +18,7 @@ def _fetch_remote_version() -> str | None:
         with urllib.request.urlopen( _PYPI_URL, timeout=3 ) as resp:
             data = json.loads( resp.read() )
             return data[ "info" ][ "version" ]
-    except Exception:
+    except ( OSError, urllib.error.URLError, json.JSONDecodeError, KeyError, ValueError ):
         pass
     return None
 

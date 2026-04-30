@@ -4,6 +4,7 @@ import json
 import threading
 import time
 import signal as _signal
+from collections.abc import Callable
 from datetime import datetime
 
 from tchat_shared import logger
@@ -16,19 +17,16 @@ from tchat_server.commands.status import _STATUS_FILE
 class AdminConsole:
     """Reads operator commands from stdin and handles server lifecycle actions."""
 
-    def __init__( self, state: ServerState, stop_callback ) -> None:
-        """Set up the console with a reference to server state and a stop callback."""
+    def __init__( self, state: ServerState, stop_callback: Callable[[], None] ) -> None:
         self._state = state
         self._stop = stop_callback
         _signal.signal( _signal.SIGUSR1, self._on_signal_restart )
 
     def start( self ) -> None:
-        """Launch the stdin-reading loop in a background daemon thread."""
         thread = threading.Thread( target=self._loop, daemon=True )
         thread.start()
 
     def _loop( self ) -> None:
-        """Block on stdin and dispatch each line as an admin command."""
         while True:
             try:
                 cmd = input()
@@ -37,7 +35,6 @@ class AdminConsole:
             self._handle( cmd.strip() )
 
     def _handle( self, cmd: str ) -> None:
-        """Route an admin command string to the appropriate action."""
         if cmd == "/quit":
             logger.server.info( "Server shutting down..." )
             msg = CommandMessage.make( "server", "Server shutting down..." )

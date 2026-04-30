@@ -6,7 +6,7 @@ from tchat_server.state.server_state import ServerState
 class KickCommand:
     """Bans and disconnects a user by username; requires admin privileges."""
 
-    def execute( self, address: tuple, args: str, state: ServerState ) -> None:
+    def execute( self, address: tuple[str, int], args: str, state: ServerState ) -> None:
         """Validate admin rights and target, then kick and ban the named user."""
         if not state.accounts.is_admin( address ):
             msg = CommandMessage.make( "server", "Unauthorized: admin only." )

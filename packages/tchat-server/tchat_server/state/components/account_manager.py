@@ -15,19 +15,19 @@ class AccountManager:
         self._accounts: list[ Account ] = []
 
 
-    def add_connection( self, address: tuple, conn: socket.socket ) -> None:
+    def add_connection( self, address: tuple[str, int], conn: socket.socket ) -> None:
         """Register a new socket connection before a username is known."""
         with self._lock:
             self._accounts.append( Account( address, conn ) )
 
-    def add_user( self, address: tuple, username: str ) -> None:
+    def add_user( self, address: tuple[str, int], username: str ) -> None:
         """Assign a username to an existing connection."""
         with self._lock:
             account = self._find( address )
             if account:
                 account.username = username
 
-    def remove_user( self, address: tuple ) -> str | None:
+    def remove_user( self, address: tuple[str, int] ) -> str | None:
         """Remove an account and return its username, or None if not found."""
         with self._lock:
             account = self._find( address )
@@ -36,13 +36,7 @@ class AccountManager:
                 return account.username or None
             return None 
 
-    def is_registered( self, address: tuple ) -> bool:
-        """Return True if the address has a non-empty username."""
-        with self._lock:
-            account = self._find( address )
-            return bool( account and account.username.strip() )
-
-    def get_username( self, address: tuple ) -> str | None:
+    def get_username( self, address: tuple[str, int] ) -> str | None:
         """Return the username for an address, or None if not found."""
         with self._lock:
             account = self._find( address )
@@ -59,7 +53,7 @@ class AccountManager:
                     usernames.append( account.username )
             return usernames
 
-    def _find( self, address: tuple ) -> Account | None:
+    def _find( self, address: tuple[str, int] ) -> Account | None:
         """Return the Account for an address, or None (caller must hold the lock)."""
         for account in self._accounts:
             if account.address == address:
@@ -71,7 +65,7 @@ class AccountManager:
         with self._lock:
             return any( a.username == username for a in self._accounts )
 
-    def kick( self, address: tuple ) -> None:
+    def kick( self, address: tuple[str, int] ) -> None:
         """Remove the account and close its socket."""
         with self._lock:
             account = self._find( address )
@@ -80,14 +74,14 @@ class AccountManager:
         if account:
             account.connection.close()
 
-    def set_admin( self, address: tuple ) -> None:
+    def set_admin( self, address: tuple[str, int] ) -> None:
         """Grant admin privileges to the account at address."""
         with self._lock:
             account = self._find( address )
             if account:
                 account.is_admin = True
 
-    def is_admin( self, address: tuple ) -> bool:
+    def is_admin( self, address: tuple[str, int] ) -> bool:
         """Return True if the account at address has admin privileges."""
         with self._lock:
             account = self._find( address )

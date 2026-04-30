@@ -66,18 +66,19 @@ class TypingNotifier:
             if self._timer:
                 self._timer.cancel()
                 self._timer = None
-            if self._is_typing:
-                self._send( "stop" )
-                self._is_typing = False
-                self._last_sent = 0.0
+            self._stop_typing()
 
     def _send_stop( self ) -> None:
         """Idle-timeout callback — send a typing-stop event if still marked as typing."""
         with self._lock:
-            if self._is_typing:
-                self._send( "stop" )
-                self._is_typing = False
-                self._last_sent = 0.0
+            self._stop_typing()
+
+    def _stop_typing( self ) -> None:
+        # Caller must hold self._lock.
+        if self._is_typing:
+            self._send( "stop" )
+            self._is_typing = False
+            self._last_sent = 0.0
 
     def _send( self, state: str ) -> None:
         """Send a TypingMessage with the given state ('start' or 'stop'), silencing OS errors."""
@@ -100,8 +101,7 @@ class InputLoop:
         history_file = Path.home() / ".tchat_history"
         notifier = TypingNotifier( self._connection, self._username )
 
-        def bottom_toolbar():
-            """Return the toolbar text showing who is currently typing."""
+        def bottom_toolbar() -> str:
             users = receiver.typing_tracker.get_typing_users()
             if not users:
                 return ""
@@ -119,7 +119,7 @@ class InputLoop:
         except KeyboardInterrupt:
             return receiver.connection_lost
 
-        def pre_run():
+        def pre_run() -> None:
             """Wire the typing notifier to the buffer's on_text_changed event before each prompt."""
             session.app.current_buffer.on_text_changed += notifier.on_text_changed
 

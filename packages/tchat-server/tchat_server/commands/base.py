@@ -8,7 +8,7 @@ from tchat_shared.exceptions import CommandError
 class Command( Protocol ):
     """Interface that every chat command must satisfy."""
 
-    def execute( self, address: tuple, args: str, state: ServerState ) -> None:
+    def execute( self, address: tuple[str, int], args: str, state: ServerState ) -> None:
         """Execute the command for the given user with the provided argument string."""
         ...
 
@@ -17,14 +17,12 @@ class CommandRegistry:
     """Maps command names to their Command implementations."""
 
     def __init__( self ) -> None:
-        """Initialise the empty command map."""
         self._commands: dict[ str, Command ] = {}
 
     def register( self, name: str, command: Command ) -> None:
-        """Register a command under the given name."""
         self._commands[ name ] = command
 
-    def dispatch( self, address: tuple, content: str, state: ServerState ) -> None:
+    def dispatch( self, address: tuple[str, int], content: str, state: ServerState ) -> None:
         """Parse content as `name [args]` and execute the matching command; raises CommandError if unknown."""
         name, _, args = content.partition( " " )
         command = self._commands.get( name )

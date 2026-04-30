@@ -15,7 +15,6 @@ def _prefix( level: str ) -> str:
     return f"{ timestamp } tchat[{ os.getpid() }]: { level:^7}"
 
 def _emit( msg: str ) -> None:
-    """Print the formatted string and append it to the log file if enabled."""
     base.log( msg, server_mode=True )
     _log_to_file( msg )
 
@@ -44,11 +43,11 @@ def message( msg: Message ) -> None:
         assert isinstance( msg, CommandMessage )
         _emit( f"{ _prefix('CMD') } { msg.text }" )
 
-def connected( address: tuple ) -> None:
+def connected( address: tuple[str, int] ) -> None:
     """Log a new client connection."""
     _emit( f"{ _prefix('CONN') } { address }" )
 
-def disconnected( address: tuple ) -> None:
+def disconnected( address: tuple[str, int] ) -> None:
     """Log a client disconnection."""
     _emit( f"{ _prefix('DISC') } { address }" )
 

@@ -9,13 +9,13 @@ from tchat_shared.exceptions import JoinError
 class JoinHandler:
     """Processes a join request: validates, registers, and notifies the room."""
 
-    def handle( self, address: tuple, msg: JoinMessage, state: ServerState ) -> None:
+    def handle( self, address: tuple[str, int], msg: JoinMessage, state: ServerState ) -> None:
         """Validate the username, register the user, and handle post-restart announcements."""
         self._validate_username( address, msg, state )
         self._register_user( state, msg, address )
         self._handle_server_restart( state )
 
-    def _validate_username( self, address: tuple, msg: JoinMessage, state: ServerState ) -> None:
+    def _validate_username( self, address: tuple[str, int], msg: JoinMessage, state: ServerState ) -> None:
         """Reject banned, empty, taken, or unauthorised admin usernames."""
         if state.ban.is_banned( address ):
             kick_msg = KickMessage.make( "server", "You are banned from this server." )
@@ -36,7 +36,7 @@ class JoinHandler:
             logger.server.warning( f"( { address[ 0] } ) tried to connect as admin" )
             raise JoinError( f"reserved username: { msg.sender }" )
 
-    def _register_user( self, state: ServerState, msg: JoinMessage, address: tuple ) -> None:
+    def _register_user( self, state: ServerState, msg: JoinMessage, address: tuple[str, int] ) -> None:
         """Add the user to accounts, broadcast the join, replay history, and send a welcome."""
         state.accounts.add_user( address, msg.sender )
         if msg.sender in _config.admin.usernames and address[ 0 ] in _config.admin.ips:
@@ -45,18 +45,18 @@ class JoinHandler:
         self._send_history_to_user( state, address )
         self._send_welcome_to_user( state, address, msg.sender )
 
-    def _broadcast_join_message( self, state: ServerState, msg: JoinMessage, address: tuple ) -> None:
+    def _broadcast_join_message( self, state: ServerState, msg: JoinMessage, address: tuple[str, int] ) -> None:
         """Broadcast a join notification to all users except the one joining."""
         join_msg = JoinMessage.make( msg.sender, _config.messages.broadcast_joined )
         state.broadcaster.cast( join_msg.to_json(), exclude=address )
         logger.server.message( join_msg )
 
-    def _send_history_to_user( self, state: ServerState, address: tuple ) -> None:
+    def _send_history_to_user( self, state: ServerState, address: tuple[str, int] ) -> None:
         """Replay all history payloads to the newly joined user."""
         for payload in state.history.get_history():
             state.broadcaster.send_to( address, payload )
 
-    def _send_welcome_to_user( self, state: ServerState, address: tuple, username: str ) -> None:
+    def _send_welcome_to_user( self, state: ServerState, address: tuple[str, int], username: str ) -> None:
         """Send the configured welcome message to the newly joined user."""
         try:
             text = _config.messages.welcome_text.format( username )

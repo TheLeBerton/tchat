@@ -8,7 +8,7 @@ import urllib.request
 
 pi = sys.argv[1]
 piuser = sys.argv[2]
-results: dict = {}
+results: dict[str, str] = {}
 
 
 def get_local() -> None:
